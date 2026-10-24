@@ -1,0 +1,2630 @@
+#!/usr/bin/env python3
+"""WE Wallpapers: interfaz para los fondos de Wallpaper Engine (Steam Workshop) en Linux.
+
+- Video  → mpvpaper, vía el plugin de Noctalia noctalia/mpvpaper.
+- Scene/web → linux-wallpaperengine, vía el plugin propio jucabego/wallpaper-engine
+  (~/.local/share/we-mpvpaper/noctalia-plugins).
+- Preset → el fondo del que depende (`dependency`) con los valores guardados en él.
+- Application (.exe de Windows) → no se puede poner de fondo en Linux; se marca así.
+- Workshop: se explora con la web pública de Steam y se suscribe a través del Steam
+  abierto (steam_ugc.py, ISteamUGC), igual que hace Wallpaper Engine. Steam descarga.
+Sin Noctalia, lanza mpvpaper / linux-wallpaperengine directamente."""
+
+import ctypes
+import gc
+import gzip
+import hashlib
+import html
+import json
+import os
+import random
+import re
+import shutil
+import socket
+import subprocess
+import sys
+import threading
+import time
+import urllib.parse
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+import gi
+
+gi.require_version("Gtk", "4.0")
+gi.require_version("Adw", "1")
+gi.require_version("GdkPixbuf", "2.0")
+from gi.repository import Adw, Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk  # noqa: E402
+
+APP_ID = os.environ.get("WE_APP_ID", "dev.jucabego.WeMpvpaper")
+WE_APPID = "431960"
+HOME = Path.home()
+STEAM_ROOTS = [HOME / ".local/share/Steam", HOME / ".steam/steam"]
+MPV_PLUGIN = "noctalia/mpvpaper"
+WE_PLUGIN = "jucabego/wallpaper-engine"
+MPV_STATE = HOME / ".local/state/noctalia/mpvpaper/assignments.json"
+WE_STATE = HOME / ".local/state/we-mpvpaper/assignments.json"
+SHARE = HOME / ".local/share/we-mpvpaper"
+PLUGIN_SRC = SHARE / "noctalia-plugins"
+COMPAT_TEST = SHARE / "compat-test.py"
+STEAM_BRIDGE = SHARE / "steam_ugc.py"
+PROPS_DIR = HOME / ".config/we-mpvpaper/props"
+SCALING_FILE = HOME / ".config/we-mpvpaper/scaling.json"  # ajuste a la pantalla elegido por fondo
+MUTE_FILE = HOME / ".config/we-mpvpaper/mute.json"  # {id: true|false} si difiere del ajuste general
+SCALINGS = [("", "Predeterminado"), ("fill", "Rellenar (recorta)"), ("fit", "Ajustar (bandas)"),
+            ("stretch", "Estirar")]
+UI_FILE = HOME / ".config/we-mpvpaper/ui.json"  # orden elegido en cada pestaña
+HISTORY_FILE = HOME / ".config/we-mpvpaper/history.json"  # {id: última vez que se puso}
+# Ajustes de linux-wallpaperengine. Los lee el plugin (cfg en service.luau) y se aplican al
+# enviarle «config»; aquí solo se guarda lo que difiere de estos valores.
+ENGINE_FILE = HOME / ".config/we-mpvpaper/engine.json"
+ENGINE_DEFAULTS = {"fps": 30, "scaling": "fill", "mute": True, "volume": 15, "automute": True,
+                   "audio_reactive": True, "fullscreen_pause": "any", "mouse": True,
+                   "parallax": True, "particles": True}
+ENGINE_SCALINGS = [("default", "Del motor"), ("fill", "Rellenar (recorta)"), ("fit", "Ajustar (bandas)"),
+                   ("stretch", "Estirar")]
+FULLSCREEN_PAUSE = [("any", "Con cualquier ventana"), ("active", "Solo con la ventana activa"),
+                    ("off", "Nunca")]
+LIB_SORTS = [("compat", "Compatibles primero"), ("title", "Título (A–Z)"),
+             ("added", "Añadidos recientemente"), ("used", "Usados recientemente"), ("type", "Tipo")]
+KIND_ORDER = {"scene": 0, "video": 1, "web": 2}
+VIDEO_DIR = HOME / "Imágenes/Wallpapers"
+CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", HOME / ".cache")) / "we-mpvpaper"
+COMPAT_DB = CACHE_DIR / "compat.json"
+THUMB_DIR = CACHE_DIR / "thumbs"
+UGC_DIR = CACHE_DIR / "workshop"
+THUMB_W, THUMB_H = 448, 252  # textura 16:9; las tarjetas crecen hasta llenar la fila
+CARD_W, CARD_H = 336, 189  # tamaño mínimo de tarjeta
+WS_SIDE = WS_MIN = 256  # el Workshop: vistas previas cuadradas de 256 px, nunca más pequeñas
+VIDEO_EXT = {".mp4", ".webm", ".mkv", ".mov", ".gif"}
+# Wallpaper Engine deduce el tipo por la extensión cuando project.json no trae "type"
+# (fondos oficiales antiguos: audiophile.json → scene, sheep.exe → application).
+KIND_EXT = {".json": "scene", ".html": "web", ".htm": "web", ".exe": "application"}
+KIND_TAGS = {"Scene": "scene", "Video": "video", "Web": "web", "Application": "application"}
+KIND_FILTERS = (("all", "Todos"), ("video", "Videos"), ("scene", "Escenas"), ("web", "Web"))
+HIDDEN_TAGS = {"Wallpaper", "Everyone", "Questionable", "Mature", "Approved", "Preset",
+               "Customizable", "Dynamic resolution", "Other resolution", *KIND_TAGS}
+# (etiqueta, browsesort de Steam, días de tendencia)
+WS_SORTS = [("Populares esta semana", "trend", 7), ("Populares este mes", "trend", 30),
+            ("Populares este año", "trend", 365), ("Mejor valorados", "toprated", 0),
+            ("Más suscritos", "totaluniquesubscribers", 0), ("Más recientes", "mostrecent", 0),
+            ("Actualizados", "lastupdated", 0)]
+# Categorías de Wallpaper Engine (etiquetas del Workshop) y su nombre en la interfaz.
+WS_TAGS = [("Abstract", "Abstracto"), ("Animal", "Animales"), ("Anime", "Anime"),
+           ("Cartoon", "Dibujos animados"), ("CGI", "CGI"), ("Cyberpunk", "Cyberpunk"),
+           ("Fantasy", "Fantasía"), ("Game", "Videojuegos"), ("Girls", "Chicas"), ("Guys", "Chicos"),
+           ("Landscape", "Paisajes"), ("Medieval", "Medieval"), ("Memes", "Memes"), ("MMD", "MMD"),
+           ("Music", "Música"), ("Nature", "Naturaleza"), ("Pixel art", "Pixel art"),
+           ("Relaxing", "Relajante"), ("Retro", "Retro"), ("Sci-Fi", "Ciencia ficción"),
+           ("Sports", "Deportes"), ("Technology", "Tecnología"), ("Television", "Televisión"),
+           ("Vehicle", "Vehículos")]
+ITEM_INSTALLED, ITEM_NEEDS_UPDATE, ITEM_DOWNLOADING, ITEM_PENDING = 4, 8, 16, 32  # EItemState
+
+sys.path.insert(0, str(SHARE))
+from steam_ugc import steam_running  # noqa: E402
+
+
+# ── Datos ─────────────────────────────────────────────────────────────────────
+
+def read_json(path, default):
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        return default
+
+
+def write_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=1, ensure_ascii=False))
+
+
+def engine_config():
+    return {**ENGINE_DEFAULTS, **read_json(ENGINE_FILE, {})}
+
+
+def save_engine_config(cfg):
+    """Guarda los ajustes y pide al plugin que reinicie los fondos con ellos."""
+    write_json(ENGINE_FILE, {k: v for k, v in cfg.items() if ENGINE_DEFAULTS.get(k) != v})
+    if WE_PLUGIN in enabled_plugins():
+        nmsg("plugin", f"{WE_PLUGIN}:service", "all", "config")
+
+
+def steam_libraries():
+    libs = set()
+    for root in STEAM_ROOTS:
+        vdf = root / "steamapps/libraryfolders.vdf"
+        if vdf.is_file():
+            for m in re.finditer(r'"path"\s+"([^"]+)"', vdf.read_text(errors="ignore")):
+                libs.add(Path(m.group(1).replace("\\\\", "\\")))
+        libs.add(root)
+    # Orden fijo: ~/.local/share/Steam y ~/.steam/steam son la misma carpeta y la primera que se
+    # vea da la ruta de los fondos oficiales (clave de compat.json). Un set la cambiaba al azar.
+    return sorted(libs)
+
+
+def existing_dirs(paths):
+    seen, out = set(), []
+    for d in paths:
+        if d.is_dir() and d.resolve() not in seen:
+            seen.add(d.resolve())
+            out.append(d)
+    return out
+
+
+def workshop_dirs():
+    """Carpetas content/431960 de todas las bibliotecas de Steam."""
+    extra = os.environ.get("WE_WORKSHOP_DIR")
+    if extra:
+        return [Path(extra)]
+    return existing_dirs(lib / "steamapps/workshop/content" / WE_APPID for lib in steam_libraries())
+
+
+def official_dirs():
+    """Fondos que trae Wallpaper Engine (defaultprojects) y los creados en su editor (myprojects)."""
+    if os.environ.get("WE_WORKSHOP_DIR"):
+        return []
+    return existing_dirs(lib / "steamapps/common/wallpaper_engine/projects" / sub
+                         for lib in steam_libraries() for sub in ("defaultprojects", "myprojects"))
+
+
+def load_items():
+    compat = read_json(COMPAT_DB, {})
+    raw = {}
+    for wdir in workshop_dirs():
+        for d in sorted(wdir.iterdir()):
+            data = read_json(d / "project.json", None)
+            if isinstance(data, dict):
+                raw[d.name] = (d, data, "workshop")
+    for odir in official_dirs():
+        for d in sorted(odir.iterdir()):
+            data = read_json(d / "project.json", None)
+            if isinstance(data, dict):
+                raw[f"official-{d.name}"] = (d, data, "official")
+
+    items = []
+    for item_id, (d, data, source) in raw.items():
+        kind = str(data.get("type", "")).lower()
+        file = d / data["file"] if data.get("file") else None
+        preview = d / data["preview"] if data.get("preview") else None
+        if not kind and file:
+            kind = KIND_EXT.get(file.suffix.lower(), "")
+        if kind != "video" and file and file.suffix.lower() in VIDEO_EXT:
+            kind = "video"
+        props = (data.get("general") or {}).get("properties") or {}
+        # El motor acepta un id del Workshop o la ruta de la carpeta.
+        target, preset = (str(d) if source == "official" else item_id), {}
+        # Preset: configuración guardada de otro fondo (dependency) con sus valores.
+        dep = str(data.get("dependency") or "")
+        if not kind and dep in raw and isinstance(data.get("preset"), dict):
+            parent = raw[dep][1]
+            kind = str(parent.get("type", "")).lower()
+            target = dep
+            props = (parent.get("general") or {}).get("properties") or {}
+            preset = {k: v for k, v in data["preset"].items() if k in props}
+            if kind == "video" and parent.get("file"):
+                file = raw[dep][0] / parent["file"]
+        props = {k: v for k, v in props.items() if isinstance(v, dict)}
+        c = compat.get(target)
+        shot = CACHE_DIR / f"shot-{item_id}.png"
+        if not shot.is_file():
+            shot = CACHE_DIR / f"shot-{target}.png"
+        items.append({
+            "id": item_id,
+            "target": target,
+            "source": source,
+            "preset": preset,
+            "dir": d,
+            "title": data.get("title") or item_id,
+            "type": kind or "?",
+            "file": file if file and file.is_file() else None,
+            "preview": preview if preview and preview.is_file() else None,
+            "shot": shot if shot.is_file() else None,
+            "tags": data.get("tags") or [],
+            "added": d.stat().st_mtime,  # Steam la rehace al bajar o actualizar el fondo
+            # None (sin probar), "ok", "partial" (funciona a medias: ver issues) o "fail"
+            "compat": None if c is None else c.get("status") or ("ok" if c.get("ok") else "fail"),
+            "issues": [] if c is None else c.get("issues") or [],
+            "projection": None if c is None else c.get("projection"),
+            "props": props,
+        })
+    # Los que funcionan primero, luego los parciales y al final los que no.
+    items.sort(key=lambda i: (i["compat"] == "fail" or not playable(i), i["compat"] == "partial",
+                              i["title"].lower()))
+    return items
+
+
+def playable(item):
+    if item["type"] == "video":
+        return item["file"] is not None
+    return item["type"] in ("scene", "web")
+
+
+def outputs():
+    try:
+        out = subprocess.run(["niri", "msg", "-j", "outputs"], capture_output=True,
+                             text=True, timeout=3).stdout
+        return sorted(json.loads(out))
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return []
+
+
+def saved_props(item_id):
+    return read_json(PROPS_DIR / f"{item_id}.json", {})
+
+
+def saved_scaling(item_id):
+    return read_json(SCALING_FILE, {}).get(item_id, "")
+
+
+def save_scaling(item_id, mode):
+    data = read_json(SCALING_FILE, {})
+    if mode:
+        data[item_id] = mode
+    else:
+        data.pop(item_id, None)
+    write_json(SCALING_FILE, data)
+
+
+def saved_mute(item_id):
+    """True/False si este fondo tiene su propio silencio; None = el de Ajustes."""
+    return read_json(MUTE_FILE, {}).get(item_id)
+
+
+def save_mute(item_id, mute):
+    data = read_json(MUTE_FILE, {})
+    if mute is None:
+        data.pop(item_id, None)
+    else:
+        data[item_id] = mute
+    write_json(MUTE_FILE, data)
+
+
+def output_sizes():
+    """{salida: (ancho, alto)} lógicos de niri."""
+    try:
+        out = subprocess.run(["niri", "msg", "-j", "outputs"], capture_output=True, text=True, timeout=3).stdout
+        return {name: (o["logical"]["width"], o["logical"]["height"])
+                for name, o in json.loads(out).items() if o.get("logical")}
+    except (OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired):
+        return {}
+
+
+def aspect_note(projection, screen):
+    """Aviso si la escena tiene otra proporción que la pantalla: con «Rellenar» se recorta."""
+    if not projection or not screen:
+        return None
+    (pw, ph), (sw, sh) = projection, screen
+    scene, display = pw / ph, sw / sh
+    if abs(scene - display) / display < 0.06:
+        return None
+    lost = 1 - min(scene, display) / max(scene, display)
+    sides = "los lados" if scene > display else "arriba y abajo"
+    return (f"Está hecho para {pw}×{ph} y tu pantalla es {sw}×{sh}: con «Rellenar» se recorta "
+            f"un {lost:.0%} por {sides}. «Ajustar» lo muestra entero con bandas.")
+
+
+def gif_still(path, at_ms=1500):
+    """Fotograma de un GIF a `at_ms`: muchos empiezan en negro con un fundido."""
+    anim = GdkPixbuf.PixbufAnimation.new_from_file(str(path))
+    tv = GLib.TimeVal()
+    tv.tv_sec, tv.tv_usec = 1000, 0
+    it = anim.get_iter(tv)
+    elapsed = 0
+    for _ in range(500):
+        delay = it.get_delay_time()
+        if delay <= 0 or elapsed + delay > at_ms:
+            break
+        elapsed += delay
+        tv.tv_sec, tv.tv_usec = 1000 + elapsed // 1000, (elapsed % 1000) * 1000
+        it.advance(tv)
+    return it.get_pixbuf()
+
+
+def thumbnail(path, w=THUMB_W, h=THUMB_H):
+    """Miniatura w×h con la imagen completa centrada; el espacio sobrante se
+    rellena con una versión desenfocada y oscurecida de la misma imagen."""
+    Interp = GdkPixbuf.InterpType
+    with open(path, "rb") as fh:
+        is_gif = fh.read(4) == b"GIF8"
+    if is_gif:
+        src = gif_still(path)
+        iw, ih = src.get_width(), src.get_height()
+        scale = min(w / iw, h / ih)
+        src = src.scale_simple(max(1, round(iw * scale)), max(1, round(ih * scale)), Interp.HYPER)
+    else:
+        _fmt, iw, ih = GdkPixbuf.Pixbuf.get_file_info(str(path))
+        scale = min(w / iw, h / ih)
+        # Se decodifica ya reducida (los JPEG se escalan al decodificar): mucho más rápido.
+        src = GdkPixbuf.Pixbuf.new_from_file_at_scale(str(path), max(1, round(iw * scale)),
+                                                      max(1, round(ih * scale)), True)
+    fw, fh = src.get_width(), src.get_height()
+
+    # Fondo: la imagen reducida a casi nada y vuelta a ampliar = desenfoque barato.
+    tiny = src.scale_simple(16, max(1, round(16 * h / w)), Interp.BILINEAR)
+    canvas = tiny.scale_simple(w, h, Interp.BILINEAR)
+    shade = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, w, h)
+    shade.fill(0x000000FF)
+    shade.composite(canvas, 0, 0, w, h, 0, 0, 1, 1, Interp.NEAREST, 110)
+
+    x, y = (w - fw) // 2, (h - fh) // 2
+    src.composite(canvas, x, y, fw, fh, x, y, 1, 1, Interp.NEAREST, 255)
+    return canvas
+
+
+def backdrop(path):
+    """Imagen muy difuminada (reducida a 16×9 y vuelta a ampliar) para el fondo de la franja
+    «En pantalla» y la cabecera del panel. Pensada para hilos de trabajo."""
+    if not path:
+        return None
+    tiny = thumbnail(path, 16, 9).scale_simple(64, 36, GdkPixbuf.InterpType.BILINEAR)
+    return Gdk.Texture.new_for_pixbuf(tiny.scale_simple(640, 360, GdkPixbuf.InterpType.BILINEAR))
+
+
+def thumb_texture(path, w=THUMB_W, h=THUMB_H):
+    """Textura de la miniatura, cacheada en disco. Pensada para hilos de trabajo."""
+    st = path.stat()
+    key = hashlib.sha1(f"{path}|{st.st_mtime_ns}|{st.st_size}|{w}x{h}".encode()).hexdigest()[:24]
+    out = THUMB_DIR / f"{key}.png"
+    if not out.is_file():
+        THUMB_DIR.mkdir(parents=True, exist_ok=True)
+        tmp = THUMB_DIR / f"{key}.{threading.get_ident()}.tmp"
+        thumbnail(path, w, h).savev(str(tmp), "png", ["compression"], ["1"])
+        tmp.replace(out)
+    return Gdk.Texture.new_from_filename(str(out))
+
+
+def video_frame(video: Path):
+    """Fotograma del video (cacheado). Las vistas previas del Workshop suelen ser
+    recortes cuadrados; un fotograma muestra el fondo completo en su proporción real."""
+    st = video.stat()
+    out = CACHE_DIR / f"{video.parent.name}-{int(st.st_mtime)}-{st.st_size}.jpg"
+    if out.is_file():
+        return out
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_suffix(f".{threading.get_ident()}.tmp.jpg")
+    cmds = [["ffmpegthumbnailer", "-i", str(video), "-o", str(tmp), "-s", str(THUMB_W * 2),
+             "-t", "15%", "-q", "8"],
+            ["ffmpeg", "-v", "error", "-y", "-ss", "2", "-i", str(video), "-frames:v", "1",
+             "-vf", f"scale={THUMB_W * 2}:-2", str(tmp)]]
+    for cmd in cmds:
+        if not shutil.which(cmd[0]):
+            continue
+        try:
+            subprocess.run(cmd, capture_output=True, timeout=30)
+        except (OSError, subprocess.TimeoutExpired):
+            continue
+        if tmp.is_file() and tmp.stat().st_size:
+            tmp.rename(out)
+            return out
+    return None
+
+
+def card_image(item):
+    """La imagen que mejor muestra el fondo: captura real del motor, fotograma del video
+    o, en su defecto, la vista previa del autor. Puede tardar (ffmpeg): usar en hilos."""
+    if item["type"] == "video" and item["file"]:
+        return video_frame(item["file"]) or item["shot"] or item["preview"]
+    return item["shot"] or item["preview"]
+
+
+def release_memory():
+    """Devuelve al sistema la memoria que glibc retiene tras soltar texturas (si no, la RSS
+    se queda en el máximo alcanzado aunque ya no se use)."""
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except (OSError, AttributeError):
+        pass
+    return False
+
+
+def prune_cache():
+    """Borra miniaturas y vistas previas del Workshop que llevan un mes sin usarse."""
+    old = time.time() - 30 * 86400
+    for d in (THUMB_DIR, UGC_DIR):
+        for f in (d.glob("*") if d.is_dir() else ()):
+            try:
+                if max(f.stat().st_atime, f.stat().st_mtime) < old:
+                    f.unlink()
+            except OSError:
+                pass
+
+
+# ── Workshop ──────────────────────────────────────────────────────────────────
+
+def http_get(url, data=None):
+    req = urllib.request.Request(url, data=data, headers={
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) WE-Wallpapers", "Accept-Encoding": "gzip"})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        body = r.read()
+        return gzip.decompress(body) if r.headers.get("Content-Encoding") == "gzip" else body
+
+
+def ws_browse(sort, days, kind, text, page, tag=None):
+    """Una página (30 fondos) del Workshop, con los filtros por defecto de Wallpaper Engine:
+    solo fondos (no presets), clasificación «Everyone» y sin Application (no van en Linux).
+    Sin clave de la API de Steam no hay endpoint de búsqueda, así que se lee el JSON que la
+    web del Workshop incrusta en la página (la misma consulta que hace su JavaScript)."""
+    # shortcut: depende del JSON incrustado (valve-ssr-data) de steamcommunity.com; si Steam
+    # cambia la página, pasar a IPublishedFileService/QueryFiles con una clave de API.
+    params = {"appid": WE_APPID, "section": "readytouseitems", "p": page,
+              "browsesort": "textsearch" if text else sort,
+              "requiredtags[]": ["Wallpaper", "Everyone"] + ([kind.capitalize()] if kind else [])
+              + ([tag] if tag else []),
+              "excludedtags[]": ["Application"]}
+    if text:
+        params["searchtext"] = text
+    elif days:
+        params["days"] = days
+    page_html = http_get("https://steamcommunity.com/workshop/browse/?"
+                         + urllib.parse.urlencode(params, doseq=True)).decode("utf-8", "replace")
+    m = re.search(r'<script[^>]*id="valve-ssr-data"[^>]*>(.*?)</script>', page_html, re.S)
+    if not m:
+        raise ValueError("la página del Workshop no trae datos")
+    queries = json.loads(json.loads(m.group(1))["renderContext"]["queryData"])["queries"]
+    browse, players = None, {}
+    for q in queries:
+        key, data = q.get("queryKey") or [None], (q.get("state") or {}).get("data")
+        if key[0] == "workshop_browse":
+            browse = data
+        elif key[0] == "PlayerLinkDetails" and len(key) > 1 and isinstance(data, dict):
+            players[str(key[1])] = (data.get("public_data") or {}).get("persona_name")
+    if not isinstance(browse, dict) or not isinstance(browse.get("results"), list):
+        raise ValueError("la página del Workshop no trae resultados")
+    items = [ws_item(r, players) for r in browse["results"] if r.get("publishedfileid")]
+    return {"items": items, "pages": int(browse.get("total_pages") or 1),
+            "total": int(browse.get("total_count") or len(items))}
+
+
+def ws_item(r, players):
+    tags = [str(t.get("tag")) for t in r.get("tags") or [] if isinstance(t, dict)]
+    res = next((t for t in tags if re.fullmatch(r"\d+ x \d+", t)), None)
+    return {
+        "id": str(r["publishedfileid"]),
+        "title": html.unescape(str(r.get("title") or "")).strip() or str(r["publishedfileid"]),
+        "preview_url": r.get("preview_url"),
+        "kind": next((KIND_TAGS[t] for t in tags if t in KIND_TAGS), "?"),
+        "resolution": res,
+        "tags": [t for t in tags if t not in HIDDEN_TAGS and t != res],
+        "size": int(r.get("file_size") or 0),
+        "rating": int(r.get("star_rating") if r.get("star_rating") is not None else -1),
+        "votes": int(r.get("total_votes") or 0),
+        "subs": int(r.get("subscriptions") or 0),
+        "author": players.get(str(r.get("creator"))),
+        "desc": str(r.get("short_description") or ""),
+        "updated": int(r.get("time_updated") or 0),
+    }
+
+
+def ws_description(item_id):
+    """Descripción completa (la búsqueda solo trae un extracto). Sin BBCode."""
+    body = http_get("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/",
+                    urllib.parse.urlencode({"itemcount": 1, "publishedfileids[0]": item_id}).encode())
+    d = json.loads(body)["response"]["publishedfiledetails"][0]
+    text = re.sub(r"\[/?[a-z0-9*]+(?:=[^\]]*)?\]", "", str(d.get("description") or ""), flags=re.I)
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def ws_preview(item):
+    """Vista previa del Workshop (casi siempre un GIF animado de 256 px), cacheada."""
+    url = item["preview_url"]
+    out = UGC_DIR / f"{item['id']}-{hashlib.sha1(url.encode()).hexdigest()[:10]}"
+    if not out.is_file():
+        UGC_DIR.mkdir(parents=True, exist_ok=True)
+        tmp = UGC_DIR / f"{out.name}.{threading.get_ident()}.tmp"
+        tmp.write_bytes(http_get(url))
+        tmp.replace(out)
+    return out
+
+
+def short_num(n):
+    for div, suffix in ((1e6, " M"), (1e3, " mil")):
+        if n >= div:
+            return f"{n / div:.1f}".rstrip("0").rstrip(".").replace(".", ",") + suffix
+    return str(n)
+
+
+class SteamError(Exception):
+    def __str__(self):
+        msg = super().__str__()
+        return "Steam no está abierto" if msg == "steam-not-running" else msg
+
+
+class SteamBridge:
+    """Proceso steam_ugc.py que habla con el cliente de Steam. Se arranca al necesitarlo y
+    se cierra tras un rato sin uso: mientras vive, Steam muestra «Jugando a Wallpaper Engine».
+    `call` bloquea: usarlo desde hilos."""
+    IDLE_SECS = 90
+
+    def __init__(self):
+        self.proc = None
+        self.lock = threading.Lock()
+        self.last = 0.0
+
+    def call(self, cmd, **args):
+        with self.lock:
+            try:
+                if not self.proc or self.proc.poll() is not None:
+                    self.proc = subprocess.Popen(
+                        [sys.executable, "-I", str(STEAM_BRIDGE)], stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, cwd=str(HOME))
+                    hello = self._read()
+                    if not hello.get("ok"):
+                        self.proc = None
+                        raise SteamError(hello.get("error"))
+                self.proc.stdin.write(json.dumps({"cmd": cmd, **args}) + "\n")
+                self.proc.stdin.flush()
+                res = self._read()
+            except OSError as e:
+                self.proc = None
+                raise SteamError(f"el puente con Steam falló ({e})") from e
+            self.last = time.monotonic()
+        if not res.get("ok"):
+            raise SteamError(res.get("error"))
+        return res
+
+    def _read(self):
+        try:
+            return json.loads(self.proc.stdout.readline())
+        except ValueError:
+            return {"ok": False, "error": "el puente con Steam se cerró"}
+
+    def idle(self):
+        return self.proc is not None and time.monotonic() - self.last > self.IDLE_SECS
+
+    def close(self):
+        with self.lock:
+            proc, self.proc = self.proc, None
+        if proc and proc.poll() is None:
+            try:
+                proc.stdin.close()
+                proc.wait(3)
+            except (OSError, subprocess.TimeoutExpired):
+                proc.kill()
+
+
+# ── Backends ──────────────────────────────────────────────────────────────────
+
+def nmsg(*args, check=True):
+    return subprocess.run(["noctalia", "msg", *args], check=check, capture_output=True,
+                          text=True, timeout=20)
+
+
+def enabled_plugins():
+    if not shutil.which("noctalia"):
+        return set()
+    try:
+        out = nmsg("plugins", "list", check=False).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return set()
+    return {l.split()[0] for l in out.splitlines() if l.rstrip().endswith(" enabled")}
+
+
+def expand(assign, outs):
+    """Convierte una asignación "*" en una por salida."""
+    assign = dict(assign)
+    if "*" in assign:
+        value = assign.pop("*")
+        for o in outs:
+            assign.setdefault(o, value)
+    return assign
+
+
+def targets(connector, outs):
+    return set(outs) if connector == "*" else {connector}
+
+
+def set_mpv_assignments(new):
+    """El plugin noctalia/mpvpaper solo lee assignments.json al arrancar: se reinicia."""
+    if not new:
+        nmsg("plugin", f"{MPV_PLUGIN}:service", "all", "clear-all")
+        return
+    nmsg("plugins", "disable", MPV_PLUGIN)
+    state = {"assignments": new, "lastAssignments": new,
+             "launchedAsSystemd": {k: False for k in new}}
+    MPV_STATE.parent.mkdir(parents=True, exist_ok=True)
+    MPV_STATE.write_text(json.dumps(state, ensure_ascii=False))
+    nmsg("plugins", "enable", MPV_PLUGIN)
+
+
+def release_mpv(connector, outs, plugins):
+    """Quita los videos de mpvpaper de las salidas indicadas."""
+    if MPV_PLUGIN in plugins:
+        cur = read_json(MPV_STATE, {}).get("assignments", {})
+        if not cur:
+            return
+        new = {} if connector == "*" else expand(cur, outs)
+        for o in targets(connector, outs):
+            new.pop(o, None)
+        if new != cur:
+            set_mpv_assignments(new)
+    else:
+        subprocess.run(["pkill", "-x", "mpvpaper"])
+
+
+def release_we(connector, plugins):
+    if WE_PLUGIN in plugins:
+        if read_json(WE_STATE, {}).get("assignments"):
+            nmsg("plugin", f"{WE_PLUGIN}:service", "all", "clear", "" if connector == "*" else connector)
+    else:
+        subprocess.run(["pkill", "-f", "linux-wallpaperengine --screen-root"])
+
+
+# Ajuste de los videos como propiedades de mpv. El plugin noctalia/mpvpaper siempre arranca
+# con panscan=1.0 (rellenar); el resto se pone por el socket IPC que abre por cada salida.
+MPV_SCALING = {"fill": {"panscan": 1.0, "keepaspect": True}, "fit": {"panscan": 0.0, "keepaspect": True},
+               "stretch": {"panscan": 0.0, "keepaspect": False}}
+
+
+def mpv_scaling(scaling):
+    return MPV_SCALING.get(scaling or engine_config()["scaling"], MPV_SCALING["fill"])
+
+
+def set_video_scaling(connector, scaling, since=0.0, wait=8.0):
+    """Manda el ajuste al mpv de esa salida. since: espera a un socket creado después (el plugin
+    reinicia mpvpaper al cambiar de video y el socket viejo puede seguir ahí un momento)."""
+    path = MPV_STATE.parent / f"ipc-{re.sub(r'[^A-Za-z0-9-]', '_', connector)}.sock"
+    end = time.time() + wait
+    while time.time() < end:
+        try:
+            if path.stat().st_ctime >= since:
+                with socket.socket(socket.AF_UNIX) as s:
+                    s.settimeout(1)
+                    s.connect(str(path))
+                    for key, value in mpv_scaling(scaling).items():
+                        s.sendall((json.dumps({"command": ["set_property", key, value]}) + "\n").encode())
+                        s.recv(4096)  # sin esperar la respuesta, cerrar perdía el segundo comando
+                return True
+        except OSError:
+            pass
+        time.sleep(0.25)
+    return False
+
+
+def apply_video(path, connector, scaling=""):
+    plugins, outs = enabled_plugins(), outputs()
+    release_we(connector, plugins)
+    path = str(path)
+    if MPV_PLUGIN in plugins:
+        cur = read_json(MPV_STATE, {}).get("assignments", {})
+        new = {"*": path} if connector == "*" else {**expand(cur, outs), connector: path}
+        since = time.time()
+        set_mpv_assignments(new)
+        set_video_scaling(connector, scaling, since)
+        return "Aplicado (video, vía Noctalia)"
+    subprocess.run(["pkill", "-x", "mpvpaper"])
+    opts = " ".join(f"{k}={'yes' if v is True else 'no' if v is False else v}" for k, v in mpv_scaling(scaling).items())
+    subprocess.Popen(["mpvpaper", "-o", f"loop-file=inf {opts} no-audio hwdec=auto",
+                      connector, path], start_new_session=True,
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return "Aplicado con mpvpaper"
+
+
+def apply_scene(item_id, connector, props, kind="scene", scaling="", mute=None):
+    plugins, outs = enabled_plugins(), outputs()
+    bg = item_id
+    release_mpv(connector, outs, plugins)
+    if WE_PLUGIN in plugins:
+        payload = json.dumps({"connector": connector, "id": bg, "props": props, "kind": kind,
+                              "scaling": scaling or None, "mute": mute}, ensure_ascii=False)
+        nmsg("plugin", f"{WE_PLUGIN}:service", "all", "set", payload)
+        return "Aplicado (linux-wallpaperengine, vía Noctalia)"
+    subprocess.run(["pkill", "-f", "linux-wallpaperengine --screen-root"])
+    # Versión parcheada (~/Proyectos/linux-wallpaperengine, rama web-fixes) si existe.
+    cmd = [shutil.which("linux-wallpaperengine-web") or "linux-wallpaperengine"]
+    for o in sorted(targets(connector, outs)) or ["*"]:
+        cmd += ["--screen-root", o, "--bg", bg]
+    for k, v in props.items():
+        cmd += ["--set-property", f"{k}={int(v) if isinstance(v, bool) else v}"]
+    if scaling:
+        cmd += ["--scaling", scaling]
+    subprocess.Popen(cmd + ["--layer", "background"] + ([] if mute is False else ["--silent"]), start_new_session=True,
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(HOME))
+    return "Aplicado con linux-wallpaperengine"
+
+
+def stop_all():
+    plugins, outs = enabled_plugins(), outputs()
+    release_we("*", plugins)
+    release_mpv("*", outs, plugins)
+    return "Fondos animados detenidos"
+
+
+def active_ids():
+    """{id, ruta de fondo oficial o ruta de video: [salidas]} de lo que está puesto ahora."""
+    active = {}
+    for conn, v in read_json(WE_STATE, {}).get("assignments", {}).items():
+        if isinstance(v, dict) and v.get("id"):
+            active.setdefault(str(v["id"]), []).append(conn)
+    for conn, path in read_json(MPV_STATE, {}).get("assignments", {}).items():
+        active.setdefault(str(path), []).append(conn)
+    return active
+
+
+def ensure_we_plugin():
+    """Registra la fuente local del plugin y lo activa si hace falta."""
+    if not shutil.which("noctalia") or not PLUGIN_SRC.is_dir():
+        return False
+    try:
+        if WE_PLUGIN in enabled_plugins():
+            return True
+        sources = nmsg("plugins", "source", "list", check=False).stdout
+        if "we-mpvpaper" not in sources:
+            nmsg("plugins", "source", "add", "we-mpvpaper", "path", str(PLUGIN_SRC))
+        nmsg("plugins", "enable", WE_PLUGIN)
+        return WE_PLUGIN in enabled_plugins()
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+# ── Propiedades ───────────────────────────────────────────────────────────────
+
+PROP_LABELS = {
+    "ui_browse_properties_scheme_color": "Color del esquema",
+    "ui_browse_properties_alignment": "Alineación",
+    "ui_browse_properties_play_rate": "Velocidad",
+}
+
+
+def prop_label(key, spec):
+    text = str(spec.get("text") or key)
+    if text in PROP_LABELS:
+        return PROP_LABELS[text]
+    if text.startswith("ui_"):
+        text = key
+    text = html.unescape(re.sub(r"<[^>]+>", " ", text))
+    return re.sub(r"\s+", " ", text).strip()[:80] or key
+
+
+def parse_color(value):
+    try:
+        parts = [float(p) for p in re.split(r"[\s,]+", str(value).strip()) if p][:3]
+        if len(parts) == 3:
+            if max(parts) > 1:
+                parts = [p / 255 for p in parts]
+            return parts
+    except ValueError:
+        pass
+    return [1.0, 1.0, 1.0]
+
+
+class PropsEditor:
+    """Filas editables para las propiedades de un fondo (como el panel de Wallpaper Engine)."""
+    EDITABLE = {"bool", "slider", "color", "combo", "textinput"}
+
+    def __init__(self, item, on_change=None):
+        self.item = item
+        self.on_change = on_change or (lambda: None)
+        self.saved = saved_props(item["id"])
+        self.getters = {}
+        self.rows = []
+        specs = sorted(item["props"].items(), key=lambda kv: (kv[1].get("order", 0), kv[0]))
+        for key, spec in specs:
+            row = self.make_row(key, spec)
+            if row:
+                self.rows.append(row)
+
+    def make_row(self, key, spec):
+        kind = str(spec.get("type", "")).lower()
+        if kind not in self.EDITABLE:
+            return None
+        title = prop_label(key, spec)
+        spec = {**spec, "value": self.item["preset"].get(key, spec.get("value"))}
+        value = self.saved.get(key, spec.get("value"))
+
+        if kind == "bool":
+            row = Adw.SwitchRow(title=title, active=bool(value))
+            row.connect("notify::active", self.changed)
+            self.getters[key] = (row.get_active, spec)
+        elif kind == "slider":
+            lo, hi = float(spec.get("min", 0)), float(spec.get("max", 100))
+            step = float(spec.get("step") or (0.1 if spec.get("fraction") else 1))
+            digits = int(spec.get("precision", 2 if spec.get("fraction") else 0))
+            try:
+                val = float(value)
+            except (TypeError, ValueError):
+                val = lo
+            scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, min(lo, val), max(hi, val), step)
+            scale.set_value(val)
+            scale.set_digits(digits)
+            scale.set_draw_value(True)
+            scale.set_value_pos(Gtk.PositionType.LEFT)
+            scale.set_hexpand(True)
+            scale.set_size_request(150, -1)
+            scale.set_valign(Gtk.Align.CENTER)
+            scale.connect("value-changed", self.changed)
+            row = Adw.ActionRow(title=title)
+            row.add_suffix(scale)
+            self.getters[key] = (scale.get_value, spec)
+        elif kind == "color":
+            r, g, b = parse_color(value)
+            rgba = Gdk.RGBA()
+            rgba.red, rgba.green, rgba.blue, rgba.alpha = r, g, b, 1.0
+            btn = Gtk.ColorDialogButton(dialog=Gtk.ColorDialog(with_alpha=False), rgba=rgba,
+                                        valign=Gtk.Align.CENTER)
+            btn.connect("notify::rgba", self.changed)
+            row = Adw.ActionRow(title=title)
+            row.add_suffix(btn)
+
+            def get_color(btn=btn):
+                c = btn.get_rgba()
+                return f"{c.red:.5f} {c.green:.5f} {c.blue:.5f}"
+            self.getters[key] = (get_color, spec)
+        elif kind == "combo":
+            options = [o for o in spec.get("options") or [] if isinstance(o, dict)]
+            if not options:
+                return None
+            labels = Gtk.StringList.new([prop_label(str(o.get("value")), {"text": o.get("label")})
+                                         for o in options])
+            values = [str(o.get("value")) for o in options]
+            row = Adw.ComboRow(title=title, model=labels)
+            if str(value) in values:
+                row.set_selected(values.index(str(value)))
+            row.connect("notify::selected", self.changed)
+            self.getters[key] = (lambda row=row, values=values: values[row.get_selected()], spec)
+        else:  # textinput
+            row = Adw.EntryRow(title=title, text=str(value or ""))
+            row.connect("changed", self.changed)
+            self.getters[key] = (row.get_text, spec)
+        return row
+
+    def changed(self, *_):
+        self.save()
+        self.on_change()
+
+    def collect(self):
+        """Solo guarda lo que difiere del valor por defecto."""
+        out = {}
+        for key, (getter, spec) in self.getters.items():
+            val = getter()
+            default = spec.get("value")
+            if spec.get("type") == "color":
+                same = parse_color(default) == parse_color(val)
+            elif isinstance(val, float):
+                try:
+                    same = abs(float(default) - val) < 1e-6
+                except (TypeError, ValueError):
+                    same = False
+            else:
+                same = str(val).lower() == str(default).lower()
+            if not same:
+                out[key] = round(val, 6) if isinstance(val, float) else val
+        return out
+
+    def save(self, props=None):
+        write_json(PROPS_DIR / f"{self.item['id']}.json", self.collect() if props is None else props)
+
+
+# ── Interfaz ──────────────────────────────────────────────────────────────────
+
+CSS = b"""
+.we-bar { padding: 14px 22px 4px 22px; }
+.we-grid { padding: 10px 22px 28px 22px; }
+.we-card {
+    border-radius: 12px;
+    background: alpha(currentColor, .06);
+    box-shadow: 0 1px 3px alpha(black, .28);
+    transition: box-shadow 200ms ease-out, outline-color 200ms ease-out, transform 220ms ease-out;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+.we-card:hover {
+    box-shadow: 0 10px 26px alpha(black, .45); outline-color: alpha(@accent_color, .45);
+    transform: translateY(-3px);
+}
+flowboxchild:selected .we-card, flowboxchild:focus-visible .we-card { outline-color: @accent_color; }
+flowboxchild { padding: 0; border-radius: 14px; background: none; outline: none; }
+flowboxchild:selected { background: none; }
+.we-fade { opacity: 0; transition: opacity 320ms ease-out; }
+.we-fade.we-in { opacity: 1; }
+.we-thumb {
+    border-radius: 12px;
+    transition: opacity 320ms ease-out, transform 600ms cubic-bezier(.2, .8, .2, 1);
+}
+.we-card:hover .we-thumb { transform: scale(1.045); }
+.we-shade {
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(to top, alpha(black, .86), alpha(black, .45) 55%, transparent);
+    padding: 28px 12px 10px 12px;
+}
+.we-card-title { color: white; font-weight: 700; }
+.we-card-sub { color: alpha(white, .74); font-size: .8em; }
+.we-chip {
+    font-size: .72em; font-weight: 700; letter-spacing: .04em;
+    padding: 2px 8px; border-radius: 99px;
+    background: alpha(black, .58); color: white;
+}
+.we-chip.video { background: alpha(@accent_bg_color, .92); color: @accent_fg_color; }
+.we-chip.web { background: alpha(@success_bg_color, .92); color: @success_fg_color; }
+.we-chip.scene { background: alpha(@purple_3, .92); }
+.we-chip.bad { background: alpha(@error_bg_color, .95); color: @error_fg_color; }
+.we-chip.preset { background: alpha(@warning_bg_color, .92); color: @warning_fg_color; }
+.we-chip.ok { background: alpha(@success_bg_color, .92); color: @success_fg_color; }
+.we-badge {
+    border-radius: 99px; padding: 4px 9px 4px 7px;
+    background: alpha(black, .62); color: white; font-size: .78em; font-weight: 700;
+    box-shadow: 0 2px 6px alpha(black, .35);
+}
+.we-badge.on { background: @accent_bg_color; color: @accent_fg_color; animation: we-pop 420ms ease-out; }
+@keyframes we-pop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.08); } }
+.we-badge.ok { background: @success_bg_color; color: @success_fg_color; }
+.we-dim { filter: grayscale(.85) brightness(.6); }
+.we-apply-fab { border-radius: 99px; padding: 6px; opacity: 0; transition: opacity 140ms ease-out; }
+.we-card:hover .we-apply-fab, .we-apply-fab:focus-visible { opacity: 1; }
+.we-card-progress trough { min-height: 4px; border-radius: 0; background: alpha(black, .55); }
+.we-card-progress progress { min-height: 4px; border-radius: 0; }
+.we-skeleton {
+    border-radius: 12px; background: alpha(currentColor, .07);
+    animation: we-pulse 1600ms ease-in-out infinite;
+}
+@keyframes we-pulse { 50% { opacity: .45; } }
+.we-now { margin: 10px 22px 0 22px; border-radius: 16px; background: #15151a; }
+.we-now-bg { filter: saturate(1.5); }
+.we-now-row {
+    padding: 10px 12px; color: white;
+    background: linear-gradient(to right, alpha(black, .62), alpha(black, .28) 70%, alpha(black, .45));
+}
+.we-now-row .dim-label { color: alpha(white, .72); opacity: 1; }
+.we-live {
+    min-width: 8px; min-height: 8px; border-radius: 99px; background: @accent_color;
+    animation: we-live 1800ms ease-in-out infinite;
+}
+@keyframes we-live {
+    0% { box-shadow: 0 0 0 0 alpha(@accent_color, .6); }
+    70% { box-shadow: 0 0 0 7px alpha(@accent_color, 0); }
+    100% { box-shadow: 0 0 0 0 alpha(@accent_color, 0); }
+}
+.we-now-pill {
+    border-radius: 12px; padding: 4px 12px 4px 4px;
+    background: alpha(white, .12);
+    transition: background 160ms ease-out;
+}
+.we-now-pill:hover { background: alpha(white, .2); }
+.we-now-thumb { border-radius: 9px; box-shadow: 0 2px 8px alpha(black, .4); }
+.we-now-label { font-size: .85em; }
+.we-now-row button.circular { background: alpha(white, .14); color: white; }
+.we-now-row button.circular:hover { background: alpha(white, .24); }
+.we-count { font-size: .9em; font-feature-settings: "tnum"; }
+.we-detail { padding: 4px 16px 16px 16px; }
+.we-ambient-bg { filter: saturate(1.6) brightness(.9); }
+.we-ambient {
+    padding: 52px 16px 14px 16px;
+    background: linear-gradient(to bottom, alpha(@sidebar_bg_color, 0), alpha(@sidebar_bg_color, .3) 45%,
+                                @sidebar_bg_color);
+}
+.we-side { background: @sidebar_bg_color; }  /* el mismo color en el que se funde .we-ambient */
+.we-side .top-bar, .we-side headerbar { background: none; box-shadow: none; }
+.we-hero { border-radius: 14px; background: black; box-shadow: 0 10px 30px alpha(black, .45); }
+.we-tag { font-size: .78em; padding: 2px 9px; border-radius: 99px; background: alpha(currentColor, .1); }
+.we-sidebar-title { font-size: 1.75em; font-weight: 800; letter-spacing: -.01em; }
+.we-stats { font-size: .9em; }
+.we-desc { font-size: .92em; }
+"""
+
+KIND_CHIP = {"video": "VIDEO", "scene": "ESCENA", "web": "WEB", "application": "APP"}
+
+
+def chip(text, *classes):
+    lbl = Gtk.Label(label=text, valign=Gtk.Align.START, halign=Gtk.Align.START)
+    lbl.add_css_class("we-chip")
+    for c in classes:
+        lbl.add_css_class(c)
+    return lbl
+
+
+def item_chips(item, box, full=False):
+    """Chips de tipo y estado de un fondo de la biblioteca."""
+    can_play = playable(item)
+    if item["type"] in KIND_CHIP:
+        box.append(chip(KIND_CHIP[item["type"]], item["type"]))
+    if item["preset"]:
+        box.append(chip("PRESET", "preset"))
+    if item["source"] == "official":
+        box.append(chip("OFICIAL"))
+    if item["compat"] == "fail" or not can_play:
+        box.append(chip("NO COMPATIBLE", "bad"))
+    elif item["compat"] == "partial":
+        box.append(chip("PARCIAL", "preset"))
+    elif full and item["compat"] == "ok":
+        box.append(chip("PROBADO", "ok"))
+
+
+def badge(icon, text=None, *classes):
+    box = Gtk.Box(spacing=5, halign=Gtk.Align.END, valign=Gtk.Align.START, margin_top=8, margin_end=8)
+    box.add_css_class("we-badge")
+    for c in classes:
+        box.add_css_class(c)
+    box.icon = Gtk.Image(icon_name=icon, pixel_size=14)
+    box.label = Gtk.Label(label=text or "", visible=bool(text))
+    box.append(box.icon)
+    box.append(box.label)
+    return box
+
+
+def grid_columns(avail, min_w, gap=18):
+    return max(1, int((avail + gap) // (min_w + gap)))
+
+
+def children(widget):
+    child = widget.get_first_child()
+    while child:
+        yield child
+        child = child.get_next_sibling()
+
+
+def warning_row(text, level="error"):
+    row = Gtk.Box(spacing=8, hexpand=True, valign=Gtk.Align.CENTER)
+    row.add_css_class(level)
+    row.append(Gtk.Image(icon_name="dialog-warning-symbolic", valign=Gtk.Align.START))
+    lbl = Gtk.Label(label=text, xalign=0, wrap=True, hexpand=True)
+    lbl.add_css_class("caption")
+    row.append(lbl)
+    return row
+
+
+def wrap_tags(tags):
+    wrap = Adw.WrapBox(child_spacing=6, line_spacing=6)
+    for t in tags:
+        lbl = Gtk.Label(label=str(t))
+        lbl.add_css_class("we-tag")
+        wrap.append(lbl)
+    return wrap
+
+
+class Thumb(Gtk.Picture):
+    """Miniatura del tamaño exacto que fija la rejilla, no el de su textura (Gtk.Picture
+    pediría el de la textura y FlowBox recortaría la proporción al repartir el ancho)."""
+    __gtype_name__ = "WeThumb"
+
+    def __init__(self, w, h):
+        super().__init__(can_shrink=True, content_fit=Gtk.ContentFit.COVER)
+        self.size = (w, h)
+
+    def set_size(self, w, h):
+        if (w, h) != self.size:
+            self.size = (w, h)
+            self.queue_resize()
+
+    def do_measure(self, orientation, _for_size):
+        v = self.size[0] if orientation == Gtk.Orientation.HORIZONTAL else self.size[1]
+        return v, v, -1, -1
+
+
+class GifPlayer:
+    """Anima un GIF en un Gtk.Picture (las vistas previas del Workshop lo son).
+    GTK no anima GIF por sí solo; GdkPixbufAnimation da los fotogramas."""
+
+    def __init__(self, pic):
+        self.pic = pic
+        self.it = None
+        self.source = 0
+        self.token = 0
+
+    def play(self, path, pool):
+        self.stop()
+        token = self.token
+
+        def load():
+            try:
+                anim = GdkPixbuf.PixbufAnimation.new_from_file(str(path))
+            except GLib.Error:
+                return
+            if not anim.is_static_image():
+                GLib.idle_add(self._start, anim, token)
+        pool.submit(load)
+
+    def _start(self, anim, token):
+        if token == self.token:
+            self.it = anim.get_iter(None)
+            self._step()
+        return False
+
+    def _step(self):
+        self.pic.set_paintable(Gdk.Texture.new_for_pixbuf(self.it.get_pixbuf()))
+        delay = self.it.get_delay_time()
+        self.source = GLib.timeout_add(max(20, delay), self._advance) if delay > 0 else 0
+        return False
+
+    def _advance(self):
+        self.it.advance(None)
+        return self._step()
+
+    def stop(self):
+        self.token += 1
+        if self.source:
+            GLib.source_remove(self.source)
+        self.source, self.it = 0, None
+
+
+class Window(Adw.ApplicationWindow):
+    def __init__(self, app):
+        super().__init__(application=app, title="WE Wallpapers")
+        self.set_default_size(1400, 860)
+        self.items = []
+        self.cards = {}
+        self.selected = None
+        self.editor = None
+        self.pool = ThreadPoolExecutor(max_workers=4)  # miniaturas
+        self.net = ThreadPoolExecutor(max_workers=6)  # Workshop
+        self.outs = outputs()
+        self.sizes = output_sizes()
+        self.bridge = SteamBridge()
+        self.downloads = {}  # id del Workshop -> {"title", "state", "done", "total", "since"}
+        self.ws = {"token": 0, "page": 0, "pages": 1, "loading": False, "items": {}, "started": False}
+        self.ws_cards = {}
+        self.reload_pending = False
+        self.polling = False
+        self.hero_gif = None
+        self.ui = read_json(UI_FILE, {})
+        self.history = read_json(HISTORY_FILE, {})
+        self.live_src = 0
+
+        self.toasts = Adw.ToastOverlay()
+        self.split = Adw.OverlaySplitView(sidebar_position=Gtk.PackType.END, show_sidebar=False,
+                                          min_sidebar_width=360, max_sidebar_width=440,
+                                          sidebar_width_fraction=0.3)
+        self.toasts.set_child(self.split)
+        self.set_content(self.toasts)
+
+        # Contenido principal: Biblioteca | Workshop
+        main = Adw.ToolbarView()
+        header = Adw.HeaderBar()
+        refresh = Gtk.Button(icon_name="view-refresh-symbolic", tooltip_text="Recargar (Ctrl+R)")
+        refresh.connect("clicked", lambda *_: self.refresh_view())
+        header.pack_start(refresh)
+        self.views = Adw.ViewStack()
+        header.set_title_widget(Adw.ViewSwitcher(stack=self.views, policy=Adw.ViewSwitcherPolicy.WIDE))
+        menu = Gio.Menu()
+        menu.append("Detener fondo animado", "win.stop")
+        menu.append("Probar compatibilidad de nuevos fondos", "win.compat")
+        menu.append("Abrir el Workshop en Steam", "win.steam-workshop")
+        prefs = Gio.Menu()
+        prefs.append("Ajustes", "win.engine-settings")
+        menu.append_section(None, prefs)
+        header.pack_end(Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text="Menú"))
+        main.add_top_bar(header)
+        main.set_content(self.views)
+        self.split.set_content(main)
+
+        self.lib_page = self.views.add_titled_with_icon(self.build_library(), "library", "Biblioteca",
+                                                        "folder-pictures-symbolic")
+        self.ws_page = self.views.add_titled_with_icon(self.build_workshop(), "workshop", "Workshop",
+                                                       "folder-download-symbolic")
+        self.views.connect("notify::visible-child-name", self.on_view_changed)
+
+        # Panel de detalles
+        side = Adw.ToolbarView(extend_content_to_top_edge=True)  # la imagen sube bajo los botones
+        side.add_css_class("we-side")
+        side.add_top_bar(Adw.HeaderBar(show_title=False))
+        self.detail = Gtk.ScrolledWindow(hscrollbar_policy=Gtk.PolicyType.NEVER, vexpand=True)
+        side.set_content(self.detail)
+        self.split.set_sidebar(side)
+        self.split.connect("notify::show-sidebar", self.on_sidebar_toggled)
+
+        for name, cb in (("stop", self.stop), ("engine-settings", self.engine_settings),
+                         ("compat", self.run_compat), ("steam-workshop", self.open_workshop),
+                         ("refresh", lambda *_: self.refresh_view()), ("shuffle", self.shuffle),
+                         ("find", lambda *_: self.current_search().grab_focus())):
+            act = Gio.SimpleAction.new(name, None)
+            act.connect("activate", cb)
+            self.add_action(act)
+        for name, cb in (("copy", self.copy_item), ("folder", self.open_folder),
+                         ("apply", self.apply_action), ("preview", self.preview_action),
+                         ("page", self.workshop_page), ("unsubscribe", self.unsubscribe_action)):
+            act = Gio.SimpleAction.new(name, GLib.VariantType.new("s"))
+            act.connect("activate", cb)
+            self.add_action(act)
+        app.set_accels_for_action("win.refresh", ["<Control>r"])
+        app.set_accels_for_action("win.find", ["<Control>f"])
+        app.set_accels_for_action("win.engine-settings", ["<Control>comma"])
+
+        self.connect("close-request", self.on_close)
+        self.monitors = []
+        self.reload()
+        self.lib_search.set_key_capture_widget(self)
+        threading.Thread(target=self.check_plugin, daemon=True).start()
+        self.pool.submit(prune_cache)
+        GLib.timeout_add_seconds(30, self.close_idle_bridge)
+
+    def check_plugin(self):
+        if shutil.which("linux-wallpaperengine") and not ensure_we_plugin():
+            GLib.idle_add(self.toast, "No se pudo activar el plugin de Noctalia; "
+                                      "las escenas se lanzarán sin él")
+
+    def on_close(self, *_):
+        self.bridge.close()
+        for pool in (self.pool, self.net):
+            pool.shutdown(wait=False, cancel_futures=True)
+        return False
+
+    def kind_toggles(self, callback):
+        group = Adw.ToggleGroup()
+        for name, label in KIND_FILTERS:
+            group.add(Adw.Toggle(name=name, label=label))
+        group.set_active_name("all")
+        group.connect("notify::active-name", lambda *_: callback())
+        # La barra da antes su espacio libre al buscador: sin esto los filtros se quedan en «To…».
+        group.connect("realize", lambda g: g.set_size_request(g.measure(Gtk.Orientation.HORIZONTAL, -1)[1], -1))
+        return group
+
+    # ── Biblioteca ──
+    def build_library(self):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        bar = Gtk.Box(spacing=12)
+        bar.add_css_class("we-bar")
+        self.kind = self.kind_toggles(self.refilter)
+        self.kind.add(Adw.Toggle(name="ok", label="Compatibles",
+                                 tooltip="Fondos que funcionan en Linux y pasaron la prueba"))
+        bar.append(self.kind)
+        keys = [k for k, _label in LIB_SORTS]
+        self.lib_sort = Gtk.DropDown.new_from_strings([label for _k, label in LIB_SORTS])
+        self.lib_sort.set_tooltip_text("Ordenar por")
+        self.lib_sort.set_selected(keys.index(self.ui.get("lib_sort")) if self.ui.get("lib_sort") in keys else 0)
+        self.lib_sort.connect("notify::selected", self.on_lib_sort)
+        bar.append(self.lib_sort)
+        self.lib_count = Gtk.Label(hexpand=True, xalign=1, ellipsize=3)  # cede su sitio si falta
+        self.lib_count.add_css_class("dim-label")
+        self.lib_count.add_css_class("we-count")
+        bar.append(self.lib_count)
+        shuffle = Gtk.Button(icon_name="media-playlist-shuffle-symbolic", action_name="win.shuffle",
+                             tooltip_text="Poner uno al azar de los que se ven")
+        shuffle.add_css_class("flat")
+        bar.append(shuffle)
+        self.lib_search = Gtk.SearchEntry(placeholder_text="Buscar por título o etiqueta", width_chars=14,
+                                          max_width_chars=28)
+        self.lib_search.connect("search-changed", lambda *_: self.refilter())
+        bar.append(self.lib_search)
+        page.append(bar)
+
+        # «En pantalla»: sobre una versión difuminada del fondo que se está viendo.
+        self.now_bg = Thumb(0, 0)
+        self.now_bg.add_css_class("we-now-bg")
+        self.now_bg.add_css_class("we-fade")
+        self.now_box = Gtk.Box(spacing=10)
+        self.now_box.add_css_class("we-now-row")
+        self.now_lead = None  # id del fondo cuya imagen difuminada hay detrás
+        self.now = Gtk.Overlay(child=self.now_bg, visible=False)
+        self.now.add_overlay(self.now_box)
+        self.now.set_measure_overlay(self.now_box, True)
+        self.now.set_overflow(Gtk.Overflow.HIDDEN)
+        self.now.add_css_class("we-now")
+        page.append(self.now)
+
+        self.flow = Gtk.FlowBox(valign=Gtk.Align.START, homogeneous=True,
+                                selection_mode=Gtk.SelectionMode.SINGLE,
+                                activate_on_single_click=True,
+                                max_children_per_line=12, min_children_per_line=1,
+                                row_spacing=18, column_spacing=18)
+        self.flow.add_css_class("we-grid")
+        self.flow.set_filter_func(self.filter)
+        self.flow.set_sort_func(lambda a, b: (lambda ka, kb: (ka > kb) - (ka < kb))(
+            self.sort_key(a.item), self.sort_key(b.item)))
+        self.flow.connect("child-activated", lambda _f, child: self.select_item(child.item))
+
+        empty = Adw.StatusPage(
+            icon_name="folder-download-symbolic", title="Todavía no tienes fondos",
+            description="Busca en el Workshop y suscríbete: Steam los descarga y aparecen aquí.")
+        go = Gtk.Button(label="Explorar el Workshop", halign=Gtk.Align.CENTER)
+        go.add_css_class("pill")
+        go.add_css_class("suggested-action")
+        go.connect("clicked", lambda *_: self.views.set_visible_child_name("workshop"))
+        empty.set_child(go)
+        self.no_match = Adw.StatusPage(icon_name="system-search-symbolic", title="Nada coincide",
+                                       description="Prueba con otro nombre, etiqueta o tipo.")
+        scroll = Gtk.ScrolledWindow(child=self.flow, vexpand=True)
+        self.fit_grid(self.flow, scroll, CARD_W, 16 / 9)
+        self.lib_stack = Gtk.Stack(vexpand=True)
+        self.lib_stack.add_named(scroll, "grid")
+        self.lib_stack.add_named(empty, "empty")
+        self.lib_stack.add_named(self.no_match, "none")
+        page.append(self.lib_stack)
+        return page
+
+    def reload(self):
+        self.reload_pending = False
+        self.items = load_items()
+        GLib.timeout_add_seconds(2, lambda: (gc.collect(), release_memory())[1])
+        self.lib_ids = {i["id"] for i in self.items if i["source"] == "workshop"}
+        self.cards = {}
+        while (child := self.flow.get_first_child()):
+            self.flow.remove(child)
+        for item in self.items:
+            self.flow.append(self.card(item))
+        self.update_lib_stack()
+        self.refresh_active()
+        self.watch_dirs()
+        for ws_id in self.ws_cards:
+            self.update_ws_card(ws_id)
+        if self.selected and self.split.get_show_sidebar():
+            # Un fondo del Workshop recién descargado pasa a mostrarse como de la biblioteca.
+            sel = self.lib_item(self.selected["id"])
+            if sel:
+                self.select_item(sel)
+            elif "dir" not in self.selected:  # sigue siendo un fondo del Workshop
+                self.show_ws_detail(self.selected)
+            else:
+                self.split.set_show_sidebar(False)
+
+    def watch_dirs(self):
+        for mon in self.monitors:
+            mon.cancel()
+        self.monitors = []
+        for d in workshop_dirs():
+            mon = Gio.File.new_for_path(str(d)).monitor_directory(Gio.FileMonitorFlags.NONE, None)
+            mon.set_rate_limit(3000)
+            mon.connect("changed", self.on_dir_changed)
+            self.monitors.append(mon)
+
+    def on_dir_changed(self, _mon, _f, _o, event):
+        if event in (Gio.FileMonitorEvent.CREATED, Gio.FileMonitorEvent.DELETED,
+                     Gio.FileMonitorEvent.MOVED_IN, Gio.FileMonitorEvent.MOVED_OUT) \
+                and not self.reload_pending:
+            self.reload_pending = True
+            GLib.timeout_add_seconds(2, lambda: (self.reload(), False)[1])
+
+    def filter(self, child):
+        item = child.item
+        kind = self.kind.get_active_name()
+        if kind in ("video", "scene", "web") and item["type"] != kind:
+            return False
+        if kind == "ok" and not (playable(item) and item["compat"] != "fail"):
+            return False
+        q = self.lib_search.get_text().strip().lower()
+        return not q or q in item["title"].lower() or any(q in str(t).lower() for t in item["tags"])
+
+    def refilter(self):
+        self.flow.invalidate_filter()
+        self.update_lib_stack()
+
+    def sort_key(self, item):
+        mode = LIB_SORTS[self.lib_sort.get_selected()][0]
+        title = item["title"].lower()
+        if mode == "title":
+            return (title,)
+        if mode == "added":
+            return (-item["added"], title)
+        if mode == "used":
+            return (-self.history.get(item["id"], 0), title)
+        works = (item["compat"] == "fail" or not playable(item), item["compat"] == "partial")
+        if mode == "type":
+            return (KIND_ORDER.get(item["type"], 9), *works, title)
+        return (*works, title)
+
+    def on_lib_sort(self, *_):
+        self.ui["lib_sort"] = LIB_SORTS[self.lib_sort.get_selected()][0]
+        write_json(UI_FILE, self.ui)
+        self.flow.invalidate_sort()
+
+    def update_lib_stack(self):
+        if not self.items:
+            self.lib_stack.set_visible_child_name("empty")
+            self.lib_count.set_label("")
+            return
+        shown = sum(1 for c in children(self.flow) if self.filter(c))
+        total = len(self.items)
+        self.lib_count.set_label(f"{total} fondos" if shown == total else f"{shown} de {total}")
+        self.lib_stack.set_visible_child_name("grid" if shown else "none")
+
+    @staticmethod
+    def item_key(item):
+        return str(item["file"]) if item["type"] == "video" and item["file"] else item["target"]
+
+    def refresh_active(self):
+        active = active_ids()
+        for card, item in self.cards.values():
+            on = None if item["preset"] else active.get(self.item_key(item))
+            card.mark.set_visible(bool(on))
+        self.build_now_playing(active)
+
+    def build_now_playing(self, active):
+        while (c := self.now_box.get_first_child()):
+            self.now_box.remove(c)
+        by_key = {self.item_key(i): i for i in self.items if not i["preset"]}
+        pills = []
+        for key, conns in active.items():
+            item = by_key.get(key)
+            title = item["title"] if item else Path(key).name
+            where = "Todas las pantallas" if "*" in conns else " · ".join(sorted(conns))
+            pill = Gtk.Box(spacing=10)
+            pill.add_css_class("we-now-pill")
+            pic = Gtk.Picture(can_shrink=True, content_fit=Gtk.ContentFit.COVER)
+            pic.set_size_request(80, 45)
+            pic.add_css_class("we-now-thumb")
+            pic.add_css_class("we-fade")
+            if item:
+                self.load_thumb(pic, item, 160, 90)
+            pill.append(pic)
+            text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+            t = Gtk.Label(label=title, xalign=0, ellipsize=3, max_width_chars=28)
+            t.add_css_class("heading")
+            w = Gtk.Label(label=where, xalign=0)
+            w.add_css_class("dim-label")
+            w.add_css_class("we-now-label")
+            text.append(t)
+            text.append(w)
+            pill.append(text)
+            if item:
+                click = Gtk.GestureClick()
+                click.connect("released", lambda *_a, item=item: self.select_item(item))
+                pill.add_controller(click)
+                pill.set_cursor_from_name("pointer")
+                pill.set_tooltip_text("Ver detalles")
+            pills.append(pill)
+
+        self.now.set_visible(bool(pills))
+        lead = next((by_key[k] for k in active if k in by_key), None)
+        if (lead and lead["id"]) != self.now_lead:
+            self.now_lead = lead and lead["id"]
+            self.now_bg.remove_css_class("we-in")
+            if lead:
+                self.set_paintable_async(self.now_bg, lambda: backdrop(card_image(lead)))
+        if pills:
+            head = Gtk.Box(spacing=8, valign=Gtk.Align.CENTER, margin_start=4)
+            dot = Gtk.Box(valign=Gtk.Align.CENTER)
+            dot.add_css_class("we-live")
+            head.append(dot)
+            lbl = Gtk.Label(label="En pantalla")
+            lbl.add_css_class("heading")
+            head.append(lbl)
+            self.now_box.append(head)
+            for p in pills:
+                self.now_box.append(p)
+            stop = Gtk.Button(icon_name="media-playback-stop-symbolic", tooltip_text="Detener fondo animado",
+                              valign=Gtk.Align.CENTER, hexpand=True, halign=Gtk.Align.END)
+            stop.add_css_class("circular")
+            stop.connect("clicked", self.stop)
+            self.now_box.append(stop)
+
+    # ── Tarjetas ──
+    def card_shell(self, w, h, dim=False):
+        """Tarjeta con imagen, sombreado inferior y capas. Devuelve (overlay, picture)."""
+        overlay = Gtk.Overlay()
+        overlay.add_css_class("we-card")
+        overlay.set_overflow(Gtk.Overflow.HIDDEN)
+        pic = Thumb(w, h)
+        pic.add_css_class("we-thumb")
+        pic.add_css_class("we-fade")
+        if dim:
+            pic.add_css_class("we-dim")
+        overlay.set_child(pic)
+        return overlay, pic
+
+    def card_text(self, overlay, title, sub, fab=None):
+        shade = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.END)
+        shade.add_css_class("we-shade")
+        row = Gtk.Box(spacing=6)
+        texts = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True, valign=Gtk.Align.END)
+        t = Gtk.Label(label=title, xalign=0, ellipsize=3, max_width_chars=1)
+        t.add_css_class("we-card-title")
+        texts.append(t)
+        if sub:
+            s = Gtk.Label(label=sub, xalign=0, ellipsize=3, max_width_chars=1)
+            s.add_css_class("we-card-sub")
+            texts.append(s)
+        row.append(texts)
+        if fab:
+            row.append(fab)
+        shade.append(row)
+        overlay.add_overlay(shade)
+        overlay.set_tooltip_text(title)
+
+    def fab(self, icon, tooltip, callback):
+        btn = Gtk.Button(icon_name=icon, valign=Gtk.Align.END, tooltip_text=tooltip)
+        btn.add_css_class("suggested-action")
+        btn.add_css_class("we-apply-fab")
+        btn.connect("clicked", lambda *_: callback())
+        return btn
+
+    def card(self, item):
+        can_play = playable(item)
+        overlay, pic = self.card_shell(*self.flow.card_size, dim=not can_play or item["compat"] == "fail")
+        self.load_thumb(pic, item)
+        if not item["shot"] and item["preview"] and item["preview"].suffix.lower() == ".gif" \
+                and item["type"] != "video":
+            self.hover_animate(overlay, pic, item["preview"])
+
+        chips = Gtk.Box(spacing=5, halign=Gtk.Align.START, valign=Gtk.Align.START, margin_top=9, margin_start=9)
+        item_chips(item, chips)
+        overlay.add_overlay(chips)
+        mark = badge("object-select-symbolic", "En pantalla", "on")
+        mark.set_visible(False)
+        overlay.add_overlay(mark)
+        self.card_text(overlay, item["title"], ", ".join(str(t) for t in item["tags"][:3]),
+                       self.fab("media-playback-start-symbolic", "Poner de fondo",
+                                lambda: self.apply(item)) if can_play else None)
+
+        child = Gtk.FlowBoxChild(child=overlay, valign=Gtk.Align.START)
+        child.item, child.pic = item, pic
+        overlay.mark = mark
+        self.cards[item["id"]] = (overlay, item)
+
+        # doble clic = aplicar
+        dbl = Gtk.GestureClick()
+        dbl.connect("pressed", lambda g, n, *_: n == 2 and can_play and self.apply(item))
+        overlay.add_controller(dbl)
+        return child
+
+    def load_thumb(self, pic, item, w=THUMB_W, h=THUMB_H):
+        """Miniatura en segundo plano (cacheada en disco): la ventana se abre al instante."""
+        def work():
+            image = card_image(item)
+            return image and thumb_texture(image, w, h)
+        self.set_paintable_async(pic, work)
+
+    def set_paintable_async(self, pic, work, pool=None):
+        def run():
+            try:
+                tex = work()
+            except (GLib.Error, OSError, ValueError, TypeError, ZeroDivisionError):
+                return
+            if tex:
+                GLib.idle_add(self.show_texture, pic, tex)
+        (pool or self.pool).submit(run)
+
+    @staticmethod
+    def show_texture(pic, tex):
+        pic.set_paintable(tex)
+        pic.add_css_class("we-in")  # .we-fade: aparece con un fundido en vez de saltar
+        return False
+
+    def hover_animate(self, overlay, pic, gif_path_fn):
+        """Al dejar el ratón sobre la tarjeta, su vista previa GIF se mueve."""
+        player = GifPlayer(pic)
+        motion = Gtk.EventControllerMotion()
+        state = {"timer": 0, "still": None}
+
+        def start():
+            state["timer"] = 0
+            path = gif_path_fn() if callable(gif_path_fn) else gif_path_fn
+            if path:
+                state["still"] = pic.get_paintable()
+                player.play(path, self.pool)
+            return False
+
+        def enter(*_):
+            state["timer"] = GLib.timeout_add(220, start)
+
+        def leave(*_):
+            if state["timer"]:
+                GLib.source_remove(state["timer"])
+                state["timer"] = 0
+            player.stop()
+            if state["still"] is not None:
+                pic.set_paintable(state["still"])
+                state["still"] = None
+        motion.connect("enter", enter)
+        motion.connect("leave", leave)
+        overlay.add_controller(motion)
+
+    @staticmethod
+    def fit_grid(flow, scroller, min_w, ratio, gap=18, pad=44):
+        """Tantas columnas como quepan con tarjetas de al menos min_w, repartiendo el ancho
+        sobrante entre ellas y manteniendo su proporción. pad = relleno lateral de .we-grid."""
+        flow.card_size = (min_w, round(min_w / ratio))
+        flow.set_homogeneous(True)
+        adj = scroller.get_hadjustment()
+
+        def changed(*_):
+            avail = adj.get_page_size() - pad
+            if avail <= 0:
+                return
+            n = grid_columns(avail, min_w, gap)
+            w = int((avail - (n - 1) * gap) // n)
+            if (w, round(w / ratio)) == flow.card_size:
+                return
+            flow.card_size = (w, round(w / ratio))
+            flow.set_min_children_per_line(n)
+            flow.set_max_children_per_line(n)
+            for child in children(flow):
+                child.pic.set_size(*flow.card_size)
+        adj.connect("changed", changed)
+
+    # ── Workshop ──
+    def build_workshop(self):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        bar = Gtk.Box(spacing=12)
+        bar.add_css_class("we-bar")
+        self.ws_kind = self.kind_toggles(self.ws_filters_changed)
+        bar.append(self.ws_kind)
+        keys = [f"{sort}:{days}" for _label, sort, days in WS_SORTS]
+        self.ws_sort = Gtk.DropDown.new_from_strings([s[0] for s in WS_SORTS])
+        self.ws_sort.set_tooltip_text("Ordenar por")
+        self.ws_sort.set_selected(keys.index(self.ui.get("ws_sort")) if self.ui.get("ws_sort") in keys else 0)
+        self.ws_sort.connect("notify::selected", lambda *_: (
+            self.ui.update(ws_sort=keys[self.ws_sort.get_selected()]), write_json(UI_FILE, self.ui),
+            self.ws_filters_changed()))
+        bar.append(self.ws_sort)
+        self.ws_tag = Gtk.DropDown.new_from_strings(["Todas las categorías", *(label for _t, label in WS_TAGS)])
+        self.ws_tag.set_tooltip_text("Categoría")
+        self.ws_tag.set_enable_search(True)
+        self.ws_tag.set_expression(Gtk.PropertyExpression.new(Gtk.StringObject, None, "string"))
+        self.ws_tag.connect("notify::selected", lambda *_: self.ws_filters_changed())
+        bar.append(self.ws_tag)
+        self.ws_search = Gtk.SearchEntry(placeholder_text="Buscar en el Workshop", hexpand=True,
+                                         halign=Gtk.Align.END, width_chars=14, max_width_chars=28,
+                                         search_delay=450)
+        self.ws_search.connect("search-changed", lambda *_: self.ws_filters_changed())
+        bar.append(self.ws_search)
+        page.append(bar)
+
+        self.steam_banner = Adw.Banner(
+            title="Steam está cerrado: puedes explorar, pero para suscribirte hay que abrirlo",
+            button_label="Abrir Steam")
+        self.steam_banner.connect("button-clicked", self.launch_steam)
+        page.append(self.steam_banner)
+
+        self.ws_flow = Gtk.FlowBox(valign=Gtk.Align.START, homogeneous=True,
+                                   selection_mode=Gtk.SelectionMode.SINGLE,
+                                   activate_on_single_click=True,
+                                   max_children_per_line=16, min_children_per_line=1,
+                                   row_spacing=18, column_spacing=18)
+        self.ws_flow.add_css_class("we-grid")
+        self.ws_flow.connect("child-activated", self.on_ws_activated)
+        self.ws_more = Adw.Spinner(height_request=32, margin_bottom=24, visible=False)
+        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        content.append(self.ws_flow)
+        content.append(self.ws_more)
+        self.ws_scroll = Gtk.ScrolledWindow(child=content, vexpand=True)
+        self.fit_grid(self.ws_flow, self.ws_scroll, WS_MIN, 1)
+        self.ws_scroll.connect("edge-reached", lambda _s, pos: pos == Gtk.PositionType.BOTTOM
+                               and self.ws_load_more())
+
+        self.ws_error = Adw.StatusPage(icon_name="network-offline-symbolic",
+                                       title="No se pudo cargar el Workshop")
+        retry = Gtk.Button(label="Reintentar", halign=Gtk.Align.CENTER)
+        retry.add_css_class("pill")
+        retry.connect("clicked", lambda *_: self.ws_refresh())
+        self.ws_error.set_child(retry)
+        self.ws_empty = Adw.StatusPage(icon_name="system-search-symbolic", title="Sin resultados",
+                                       description="Prueba con otras palabras o quita los filtros de tipo y categoría.")
+        self.ws_stack = Gtk.Stack(vexpand=True)
+        self.ws_stack.add_named(self.ws_scroll, "grid")
+        self.ws_stack.add_named(self.ws_error, "error")
+        self.ws_stack.add_named(self.ws_empty, "empty")
+        page.append(self.ws_stack)
+        return page
+
+    def ws_filters_changed(self):
+        # Steam ordena las búsquedas por relevancia: el orden elegido no se usa mientras haya texto.
+        searching = bool(self.ws_search.get_text().strip())
+        self.ws_sort.set_sensitive(not searching)
+        self.ws_sort.set_tooltip_text("Al buscar, se ordena por relevancia" if searching else "Ordenar por")
+        # SearchEntry emite search-changed al crearse: no consultar hasta abrir la pestaña.
+        if self.ws["started"]:
+            self.ws_refresh()
+
+    def ws_refresh(self):
+        ws = self.ws
+        ws.update(token=ws["token"] + 1, page=0, pages=1, loading=False, started=True)
+        self.ws_cards = {}
+        while (child := self.ws_flow.get_first_child()):
+            self.ws_flow.remove(child)
+        GLib.timeout_add_seconds(2, lambda: (gc.collect(), release_memory())[1])
+        # Dos filas completas. La primera vez la rejilla aún no tiene ancho: se usa el de la ventana.
+        width = self.ws_scroll.get_width() or self.get_width()
+        for _ in range(2 * grid_columns(width - 44, WS_MIN)):
+            sk = Thumb(*self.ws_flow.card_size)
+            sk.add_css_class("we-skeleton")
+            child = Gtk.FlowBoxChild(child=sk, can_focus=False, can_target=False)
+            child.ws, child.pic = None, sk
+            self.ws_flow.append(child)
+        self.ws_stack.set_visible_child_name("grid")
+        self.ws_scroll.get_vadjustment().set_value(0)
+        self.ws_load_more()
+
+    def ws_load_more(self):
+        ws = self.ws
+        if ws["loading"] or ws["page"] >= ws["pages"] or not ws["started"]:
+            return
+        ws["loading"] = True
+        self.ws_more.set_visible(ws["page"] > 0)
+        label, sort, days = WS_SORTS[self.ws_sort.get_selected()]
+        kind = self.ws_kind.get_active_name()
+        tag = self.ws_tag.get_selected()
+        args = (sort, days, None if kind == "all" else kind, self.ws_search.get_text().strip(), ws["page"] + 1,
+                WS_TAGS[tag - 1][0] if tag else None)
+        token = ws["token"]
+
+        def work():
+            try:
+                res, err = ws_browse(*args), None
+            except (OSError, ValueError, KeyError) as e:
+                res, err = None, e
+            GLib.idle_add(self.ws_loaded, token, res, err)
+        self.net.submit(work)
+
+    def ws_loaded(self, token, res, err):
+        ws = self.ws
+        if token != ws["token"]:
+            return False
+        ws["loading"] = False
+        self.ws_more.set_visible(False)
+        for child in [c for c in children(self.ws_flow) if c.ws is None]:
+            self.ws_flow.remove(child)
+        if err:
+            if ws["page"] == 0:
+                self.ws_error.set_description(f"Comprueba la conexión. ({err})")
+                self.ws_stack.set_visible_child_name("error")
+            else:
+                self.toast("No se pudieron cargar más fondos del Workshop")
+            return False
+        ws["page"] += 1
+        ws["pages"] = res["pages"]
+        for it in res["items"]:
+            if it["id"] in self.ws_cards:  # la tendencia cambia entre páginas
+                continue
+            ws["items"][it["id"]] = it
+            self.ws_flow.append(self.ws_card(it))
+        if ws["page"] == 1 and not res["items"]:
+            self.ws_stack.set_visible_child_name("empty")
+        # Pantallas anchas: si la primera página no llena la vista no hay scroll que pida más.
+        GLib.idle_add(self.ws_fill_viewport)
+        return False
+
+    def ws_fill_viewport(self):
+        adj = self.ws_scroll.get_vadjustment()
+        if self.views.get_visible_child_name() == "workshop" and adj.get_page_size() > 0 \
+                and adj.get_upper() <= adj.get_page_size() + 40:
+            self.ws_load_more()
+        return False
+
+    def ws_card(self, it):
+        overlay, pic = self.card_shell(*self.ws_flow.card_size)
+        preview = {"path": None}
+
+        def thumb():
+            preview["path"] = ws_preview(it)
+            return thumb_texture(preview["path"], WS_SIDE, WS_SIDE)
+        if it["preview_url"]:
+            self.set_paintable_async(pic, thumb, self.net)  # descarga: no ocupa los hilos de miniaturas
+            self.hover_animate(overlay, pic, lambda: preview["path"])
+
+        chips = Gtk.Box(spacing=5, halign=Gtk.Align.START, valign=Gtk.Align.START, margin_top=9, margin_start=9)
+        if it["kind"] in KIND_CHIP:
+            chips.append(chip(KIND_CHIP[it["kind"]], it["kind"]))
+        overlay.add_overlay(chips)
+        overlay.badge = badge("object-select-symbolic")
+        overlay.add_overlay(overlay.badge)
+        overlay.progress = Gtk.ProgressBar(valign=Gtk.Align.END, visible=False)
+        overlay.progress.add_css_class("we-card-progress")
+        overlay.add_overlay(overlay.progress)
+        sub = " · ".join(x for x in (it["author"], f"{short_num(it['subs'])} suscriptores") if x)
+        overlay.fab = self.fab("folder-download-symbolic", "Suscribirse", lambda: self.ws_primary(it))
+        self.card_text(overlay, it["title"], sub, overlay.fab)
+
+        child = Gtk.FlowBoxChild(child=overlay, valign=Gtk.Align.START)
+        child.ws, child.pic = it, pic
+        self.ws_cards[it["id"]] = overlay
+        self.update_ws_card(it["id"])
+        return child
+
+    def ws_status(self, ws_id):
+        """installed | downloading | queued | None, y el progreso 0..1."""
+        if ws_id in self.lib_ids:
+            return "installed", 1.0
+        dl = self.downloads.get(ws_id)
+        if not dl:
+            return None, 0.0
+        if dl["done"] and dl["total"]:
+            return "downloading", dl["done"] / dl["total"]
+        return "queued", 0.0  # Steam aún no ha empezado a bajar bytes
+
+    def update_ws_card(self, ws_id):
+        overlay = self.ws_cards.get(ws_id)
+        if not overlay:
+            return
+        status, frac = self.ws_status(ws_id)
+        b = overlay.badge
+        b.set_visible(status is not None)
+        for c in ("ok", "on"):
+            b.remove_css_class(c)
+        if status == "installed":
+            b.icon.set_from_icon_name("object-select-symbolic")
+            b.label.set_label("Instalado")
+            b.add_css_class("ok")
+        elif status == "downloading":
+            b.icon.set_from_icon_name("folder-download-symbolic")
+            b.label.set_label(f"{frac:.0%}")
+            b.add_css_class("on")
+        elif status == "queued":
+            b.icon.set_from_icon_name("content-loading-symbolic")
+            b.label.set_label("En cola")
+        b.label.set_visible(True)
+        overlay.progress.set_visible(status in ("downloading", "queued"))
+        if status == "queued":
+            overlay.progress.pulse()
+        else:
+            overlay.progress.set_fraction(frac)
+        installed = status == "installed"
+        overlay.fab.set_visible(status is None or installed)
+        overlay.fab.set_icon_name("media-playback-start-symbolic" if installed else "folder-download-symbolic")
+        overlay.fab.set_tooltip_text("Poner de fondo" if installed else "Suscribirse")
+
+    def ws_primary(self, it):
+        """Acción del botón de la tarjeta: suscribirse, o poner de fondo si ya está."""
+        item = self.lib_item(it["id"])
+        if item:
+            if playable(item):
+                self.apply(item)
+            else:
+                self.select_item(item)
+        else:
+            self.subscribe(it)
+
+    def lib_item(self, item_id):
+        return next((i for i in self.items if i["id"] == item_id), None)
+
+    def on_ws_activated(self, _flow, child):
+        if child.ws is None:
+            return
+        item = self.lib_item(child.ws["id"])
+        if item:
+            self.select_item(item)
+        else:
+            self.selected = child.ws
+            self.show_ws_detail(child.ws)
+            self.split.set_show_sidebar(True)
+            self.ws_flow.select_child(child)
+
+    def on_view_changed(self, *_):
+        self.split.set_show_sidebar(False)
+        self.current_search().set_key_capture_widget(self)
+        other = self.lib_search if self.current_search() is self.ws_search else self.ws_search
+        other.set_key_capture_widget(None)
+        if self.views.get_visible_child_name() == "workshop":
+            self.steam_banner.set_revealed(not steam_running())
+            if not self.ws["started"]:
+                self.ws_refresh()
+            else:
+                GLib.idle_add(self.ws_fill_viewport)
+
+    def current_search(self):
+        return self.ws_search if self.views.get_visible_child_name() == "workshop" else self.lib_search
+
+    def refresh_view(self):
+        if self.views.get_visible_child_name() == "workshop":
+            self.ws_refresh()
+        else:
+            self.reload()
+
+    # ── Steam: suscripciones y descargas ──
+    def subscribe(self, it):
+        if not steam_running():
+            self.steam_banner.set_revealed(True)
+            self.toast("Abre Steam para suscribirte")
+            return
+        self.downloads[it["id"]] = {"title": it["title"], "state": 0, "done": 0, "total": 0,
+                                    "since": time.monotonic()}
+        self.update_downloads_ui()
+
+        def work():
+            try:
+                res = self.bridge.call("subscribe", id=it["id"])
+                msg = None if res.get("result") == 1 else \
+                    f"Steam rechazó la suscripción (código {res.get('result')})"
+            except SteamError as e:
+                msg = f"No se pudo suscribir: {e}"
+            GLib.idle_add(self.subscribed_done, it, msg)
+        threading.Thread(target=work, daemon=True).start()
+
+    def subscribed_done(self, it, error):
+        if error:
+            self.downloads.pop(it["id"], None)
+            self.toast(error)
+        else:
+            toast = Adw.Toast(title=f"Suscrito a «{it['title']}»: Steam lo está descargando", timeout=4)
+            self.toasts.add_toast(toast)
+            if it["id"] in self.downloads:
+                self.downloads[it["id"]]["toast"] = toast
+            if not self.polling:
+                self.polling = True
+                GLib.timeout_add(1000, self.poll_downloads)
+        self.update_downloads_ui()
+        return False
+
+    def poll_downloads(self):
+        """Progreso de las descargas que hace Steam (ISteamUGC::GetItemDownloadInfo)."""
+        ids = list(self.downloads)
+        if not ids:
+            self.polling = False
+            return False
+
+        def work():
+            try:
+                states = self.bridge.call("state", ids=ids)["items"]
+            except SteamError:
+                states = None
+            GLib.idle_add(self.downloads_polled, states)
+        threading.Thread(target=work, daemon=True).start()
+        return False
+
+    def downloads_polled(self, states):
+        for ws_id, st in (states or {}).items():
+            dl = self.downloads.get(ws_id)
+            if not dl:
+                continue
+            dl.update(state=st["state"], done=st["done"], total=st["total"])
+            busy = st["state"] & (ITEM_DOWNLOADING | ITEM_PENDING | ITEM_NEEDS_UPDATE)
+            if st["state"] & ITEM_INSTALLED and not busy:
+                self.downloads.pop(ws_id)
+                if dl.get("toast"):
+                    dl["toast"].dismiss()  # si no, el aviso nuevo espera tras «lo está descargando»
+                self.toast(f"«{dl['title']}» ya está en tu biblioteca")
+                self.reload_pending = True
+                GLib.timeout_add_seconds(1, lambda: (self.reload(), False)[1])
+            elif time.monotonic() - dl["since"] > 1800:
+                self.downloads.pop(ws_id)  # Steam no lo descargó en media hora: no insistir
+        self.update_downloads_ui()
+        if self.downloads:
+            GLib.timeout_add(1000, self.poll_downloads)
+        else:
+            self.polling = False
+        return False
+
+    def update_downloads_ui(self):
+        n = len(self.downloads)
+        self.ws_page.set_badge_number(n)
+        self.ws_page.set_needs_attention(n > 0)
+        for ws_id in list(self.ws_cards):
+            self.update_ws_card(ws_id)
+        if self.split.get_show_sidebar() and self.selected and "dir" not in self.selected:
+            self.update_ws_action()
+
+    def close_idle_bridge(self):
+        if not self.downloads and self.bridge.idle():
+            threading.Thread(target=self.bridge.close, daemon=True).start()
+        return True
+
+    def launch_steam(self, *_):
+        subprocess.Popen(["steam", "-silent"], start_new_session=True,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.toast("Abriendo Steam…")
+        tries = {"n": 0}
+
+        def check():
+            tries["n"] += 1
+            if steam_running():
+                self.steam_banner.set_revealed(False)
+                return False
+            return tries["n"] < 30
+        GLib.timeout_add_seconds(2, check)
+
+    def unsubscribe_action(self, _action, param):
+        item = self.find(param.get_string())
+        dialog = Adw.AlertDialog(
+            heading=f"¿Cancelar la suscripción a «{item['title']}»?",
+            body="Steam borrará sus archivos. Si está en pantalla, dejará de verse "
+                 "cuando el motor se reinicie.")
+        dialog.add_response("cancel", "Conservar")
+        dialog.add_response("unsubscribe", "Cancelar suscripción")
+        dialog.set_response_appearance("unsubscribe", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.set_close_response("cancel")
+
+        def on_response(_d, response):
+            if response != "unsubscribe":
+                return
+
+            def work():
+                try:
+                    res = self.bridge.call("unsubscribe", id=item["id"])
+                    msg = "Suscripción cancelada: Steam borrará los archivos en breve" \
+                        if res.get("result") == 1 else f"Steam no lo permitió (código {res.get('result')})"
+                except SteamError as e:
+                    msg = f"No se pudo cancelar: {e}"
+                GLib.idle_add(self.toast, msg)
+            threading.Thread(target=work, daemon=True).start()
+        dialog.connect("response", on_response)
+        dialog.present(self)
+
+    # ── Panel de detalles ──
+    def select_item(self, item):
+        self.selected = item
+        self.show_detail(item)
+        self.split.set_show_sidebar(True)
+        card = self.cards.get(item["id"])
+        if card:  # al abrirse desde «En pantalla» o el Workshop, marcar también la tarjeta
+            self.flow.select_child(card[0].get_parent())
+
+    def on_sidebar_toggled(self, *_):
+        self.lib_count.set_visible(not self.split.get_show_sidebar())  # con el panel no cabe
+        if not self.split.get_show_sidebar():
+            self.flow.unselect_all()
+            self.ws_flow.unselect_all()
+            if self.hero_gif:
+                self.hero_gif.stop()
+            self.detail.set_child(None)  # detiene la vista previa de video
+
+    def hero(self, ratio=16 / 9):
+        pic = Gtk.Picture(can_shrink=True, content_fit=Gtk.ContentFit.CONTAIN, hexpand=True)
+        pic.set_size_request(-1, 190)
+        frame = Gtk.AspectFrame(ratio=ratio, obey_child=False, child=pic, hexpand=True)
+        frame.add_css_class("we-hero")
+        frame.set_overflow(Gtk.Overflow.HIDDEN)
+        return frame, pic
+
+    def mute_row(self, item):
+        """Silencio propio del fondo. Se guarda solo si difiere del de Ajustes."""
+        general = engine_config()["mute"]
+        own = saved_mute(item["id"])
+        row = Adw.SwitchRow(title="Silenciar este fondo", active=general if own is None else own)
+
+        def subtitle():
+            follows = saved_mute(item["id"]) is None
+            row.set_subtitle("Como en Ajustes" if follows else
+                             "Solo este fondo" if row.get_active() else
+                             f"Solo este fondo · volumen {engine_config()['volume']} %")
+
+        def toggled(*_):
+            save_mute(item["id"], None if row.get_active() == general else row.get_active())
+            subtitle()
+            self.live_apply(item)
+        subtitle()
+        row.connect("notify::active", toggled)
+        return row
+
+    def ambient(self, image_fn=None):
+        """Cabecera del panel: la vista previa y el título sobre la propia imagen del fondo,
+        difuminada, que se funde con el panel (el mismo recurso que la franja «En pantalla»)."""
+        bg = Thumb(0, 0)
+        bg.add_css_class("we-ambient-bg")
+        bg.add_css_class("we-fade")
+        top = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        top.add_css_class("we-ambient")
+        # Los dos en la misma celda (se pinta antes bg). Gtk.Overlay mediría mal el alto del
+        # título y las etiquetas cuando ocupan varias líneas.
+        head = Gtk.Grid(overflow=Gtk.Overflow.HIDDEN)
+        head.attach(bg, 0, 0, 1, 1)
+        head.attach(top, 0, 0, 1, 1)
+        if image_fn:
+            self.set_paintable_async(bg, lambda: backdrop(image_fn()))
+        head.bg = bg
+        return head, top
+
+    def panel(self, head, box):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        page.append(head)
+        page.append(box)
+        self.detail.set_child(page)
+
+    def title_block(self, box, title, chips, tags):
+        t = Gtk.Label(label=title, xalign=0, wrap=True, selectable=True)
+        t.add_css_class("we-sidebar-title")
+        box.append(t)
+        box.append(chips)
+        if tags:
+            box.append(wrap_tags(tags[:10]))
+
+    def show_detail(self, item):
+        if self.hero_gif:
+            self.hero_gif.stop()
+        can_play = playable(item)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        box.add_css_class("we-detail")
+
+        # Vista previa grande
+        if item["type"] == "video" and item["file"]:
+            hero = Gtk.Video.new_for_file(Gio.File.new_for_path(str(item["file"])))
+            hero.set_autoplay(True)
+            hero.set_loop(True)
+            if hasattr(hero, "set_graphics_offload"):
+                hero.set_graphics_offload(Gtk.GraphicsOffloadEnabled.ENABLED)
+            stream = hero.get_media_stream()
+            if stream:
+                stream.set_muted(True)
+            else:
+                hero.connect("notify::media-stream",
+                             lambda v, *_: v.get_media_stream() and v.get_media_stream().set_muted(True))
+            hero.set_hexpand(True)
+            hero.set_size_request(-1, 190)
+            frame = Gtk.AspectFrame(ratio=16 / 9, obey_child=False, child=hero, hexpand=True)
+            frame.add_css_class("we-hero")
+            frame.set_overflow(Gtk.Overflow.HIDDEN)
+        else:
+            frame, pic = self.hero()
+            self.load_thumb(pic, item, 800, 450)
+            if not item["shot"] and item["preview"] and item["preview"].suffix.lower() == ".gif":
+                self.hero_gif = GifPlayer(pic)
+                self.hero_gif.play(item["preview"], self.pool)
+        head, top = self.ambient(lambda: card_image(item))
+        top.append(frame)
+
+        chips = Gtk.Box(spacing=6)
+        item_chips(item, chips, full=True)
+        self.title_block(top, item["title"], chips, item["tags"])
+
+        if item["type"] == "application":
+            warning = "Es un programa de Windows (.exe): no se puede usar de fondo en Linux."
+        elif not can_play:
+            warning = "Este fondo no se puede reproducir en Linux."
+        elif item["compat"] == "fail":
+            warning = "No funciona en Linux: " + ("; ".join(item["issues"]).lower()
+                                                  or "el motor se cierra al cargarlo") + "."
+        else:
+            warning = None
+        if warning and can_play:
+            box.append(warning_row(warning))
+        if item["compat"] == "partial" and item["issues"]:
+            box.append(warning_row("Funciona a medias:\n" + "\n".join(f"• {i}" for i in item["issues"]),
+                                   "warning"))
+
+        # Aplicar
+        group = Adw.PreferencesGroup()
+        self.out_row = Adw.ComboRow(title="Pantalla", use_subtitle=True,
+                                    model=Gtk.StringList.new(["Todas las pantallas", *self.outs]))
+        rows = 0
+        if len(self.outs) > 1 and can_play:
+            group.add(self.out_row)
+            rows += 1
+        if can_play:
+            rows += 1
+            keys = [key for key, _label in SCALINGS]
+            labels = [label for _key, label in SCALINGS]
+            current, default = saved_scaling(item["id"]), engine_config()["scaling"]
+            labels[0] += f" ({dict(ENGINE_SCALINGS).get(default, default).split(' (')[0].lower()})"
+            # use_subtitle antes que model: al revés el subtítulo se queda vacío
+            fit = Adw.ComboRow(title="Ajuste a la pantalla", use_subtitle=True, model=Gtk.StringList.new(labels),
+                               selected=keys.index(current) if current in keys else 0)
+            fit.connect("notify::selected", lambda row, *_: (
+                save_scaling(item["id"], keys[row.get_selected()]), self.live_apply(item)))
+            group.add(fit)
+            screen = self.sizes.get(self.outs[0]) if self.outs else None
+            if len(self.outs) > 1:
+                sel = self.out_row.get_selected()
+                screen = self.sizes.get(self.outs[sel - 1] if sel else self.outs[0])
+            note = aspect_note(item["projection"], screen) if (current or default) in ("fill", "default") else None
+            if note:
+                group.set_description(note)
+            if item["type"] in ("scene", "web"):
+                group.add(self.mute_row(item))
+        if rows:
+            box.append(group)
+
+        actions = Gtk.Box(spacing=8, homogeneous=False)
+        if not can_play:
+            actions.append(warning_row(warning))  # el menú «Más» queda a su lado, no suelto
+        if can_play:
+            apply = Gtk.Button(label="Poner de fondo", hexpand=True)
+            apply.add_css_class("suggested-action")
+            apply.add_css_class("pill")
+            apply.connect("clicked", lambda *_: self.apply(item, from_sidebar=True))
+            actions.append(apply)
+        if item["type"] in ("scene", "web"):
+            prev = Gtk.Button(icon_name="window-new-symbolic", tooltip_text="Vista previa en una ventana")
+            prev.add_css_class("circular")
+            prev.connect("clicked", lambda *_: self.preview(item))
+            actions.append(prev)
+        more = Gio.Menu()
+        more.append("Abrir carpeta", f"win.folder::{item['id']}")
+        if item["source"] == "workshop":
+            more.append("Ver en el Workshop", f"win.page::{item['id']}")
+        if item["type"] == "video":
+            more.append("Copiar a ~/Imágenes/Wallpapers", f"win.copy::{item['id']}")
+        if item["source"] == "workshop":
+            danger = Gio.Menu()
+            danger.append("Cancelar suscripción…", f"win.unsubscribe::{item['id']}")
+            more.append_section(None, danger)
+        mb = Gtk.MenuButton(icon_name="view-more-symbolic", menu_model=more, tooltip_text="Más")
+        mb.add_css_class("circular")
+        actions.append(mb)
+        box.append(actions)
+
+        # Propiedades
+        self.editor = None
+        if item["props"] and item["type"] in ("scene", "web"):
+            self.editor = PropsEditor(item, lambda: self.live_apply(item))
+            if self.editor.rows:
+                live = not item["preset"] and self.item_key(item) in active_ids()
+                pg = Adw.PreferencesGroup(title="Propiedades", description=(
+                    "Está en pantalla: los cambios se ven al momento." if live else
+                    "Se guardan solas y se usan al ponerlo de fondo."))
+                reset = Gtk.Button(icon_name="edit-undo-symbolic", tooltip_text="Restablecer valores",
+                                   valign=Gtk.Align.CENTER)
+                reset.add_css_class("flat")
+                reset.connect("clicked", lambda *_: (self.editor.save({}), self.show_detail(item),
+                                                     self.live_apply(item)))
+                pg.set_header_suffix(reset)
+                for row in self.editor.rows:
+                    pg.add(row)
+                box.append(pg)
+
+        # Información
+        info = Adw.PreferencesGroup(title="Información")
+        engine = {"video": "mpvpaper", "scene": "linux-wallpaperengine",
+                  "web": "linux-wallpaperengine (Chromium)",
+                  "application": "Ninguno (programa de Windows)"}.get(item["type"], "—")
+        origin = ("Workshop", item["id"]) if item["source"] == "workshop" else ("Origen", "Incluido en Wallpaper Engine")
+        size_row = Adw.ActionRow(title="Tamaño", subtitle="Calculando…")
+        for title, value in (origin, ("Motor", engine)):
+            row = Adw.ActionRow(title=title, subtitle=value, subtitle_selectable=True)
+            row.add_css_class("property")
+            info.add(row)
+        size_row.add_css_class("property")
+        info.add(size_row)
+
+        def size():
+            total = sum(f.stat().st_size for f in item["dir"].rglob("*") if f.is_file())
+            GLib.idle_add(size_row.set_subtitle, GLib.format_size(total))
+        self.pool.submit(size)
+        box.append(info)
+        self.panel(head, box)
+
+    def show_ws_detail(self, it):
+        if self.hero_gif:
+            self.hero_gif.stop()
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        box.add_css_class("we-detail")
+        frame, pic = self.hero(ratio=1)
+        pic.set_content_fit(Gtk.ContentFit.COVER)
+        self.hero_gif = player = GifPlayer(pic)
+        head, top = self.ambient()
+        if it["preview_url"]:
+            def preview():
+                path = ws_preview(it)
+                GLib.idle_add(lambda: (player.play(path, self.pool), False)[1])
+                self.set_paintable_async(head.bg, lambda: backdrop(path))
+                return Gdk.Texture.new_from_filename(str(path))
+            self.set_paintable_async(pic, preview, self.net)
+        top.append(frame)
+
+        chips = Gtk.Box(spacing=6)
+        if it["kind"] in KIND_CHIP:
+            chips.append(chip(KIND_CHIP[it["kind"]], it["kind"]))
+        if it["resolution"]:
+            chips.append(chip(it["resolution"].replace(" x ", "×")))
+        self.title_block(top, it["title"], chips, it["tags"])
+
+        stats = []
+        if it["author"]:
+            stats.append(("avatar-default-symbolic", it["author"]))
+        if it["rating"] >= 0:
+            stats.append(("starred-symbolic", f"{it['rating']} de 5 · {short_num(it['votes'])} votos"))
+        stats.append(("folder-download-symbolic", f"{short_num(it['subs'])} suscriptores"))
+        if it["size"]:
+            stats.append(("drive-harddisk-symbolic", GLib.format_size(it["size"])))
+        if it["updated"]:
+            when = GLib.DateTime.new_from_unix_local(it["updated"]).format("%-d %b %Y")
+            stats.append(("document-edit-symbolic", f"Actualizado el {when}"))
+        stat_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        for icon, text in stats:
+            row = Gtk.Box(spacing=8)
+            row.append(Gtk.Image(icon_name=icon))
+            row.append(Gtk.Label(label=text, xalign=0, ellipsize=3))
+            row.add_css_class("we-stats")
+            stat_box.append(row)
+        box.append(stat_box)
+
+        self.ws_action = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        box.append(self.ws_action)
+        self.update_ws_action()
+
+        if it["kind"] in ("scene", "web"):
+            note = Gtk.Label(xalign=0, wrap=True, label=(
+                "Las escenas se reproducen con linux-wallpaperengine: algunos efectos pueden verse "
+                "distintos que en Windows." if it["kind"] == "scene" else
+                "Los fondos web se reproducen con linux-wallpaperengine (Chromium)."))
+            note.add_css_class("dim-label")
+            note.add_css_class("caption")
+            box.append(note)
+
+        desc_group = Adw.PreferencesGroup(title="Descripción")
+        desc = Gtk.Label(label=it["desc"] or "Sin descripción.", xalign=0, wrap=True, selectable=True,
+                         natural_wrap_mode=Gtk.NaturalWrapMode.WORD)
+        desc.add_css_class("we-desc")
+        desc_group.add(desc)
+        box.append(desc_group)
+
+        def full_desc():
+            try:
+                text = ws_description(it["id"])
+            except (OSError, ValueError, KeyError, IndexError):
+                return
+            if text:
+                GLib.idle_add(desc.set_label, text[:4000])
+        self.net.submit(full_desc)
+        self.panel(head, box)
+
+    def update_ws_action(self):
+        """Botón principal del panel del Workshop según el estado (suscribirse / descargando)."""
+        it = self.selected
+        box = getattr(self, "ws_action", None)
+        if not box or not it or "dir" in it:
+            return
+        while (c := box.get_first_child()):
+            box.remove(c)
+        status, frac = self.ws_status(it["id"])
+        row = Gtk.Box(spacing=8)
+        if status == "queued":
+            wait = Gtk.Box(spacing=8, hexpand=True, halign=Gtk.Align.CENTER)
+            wait.append(Adw.Spinner())
+            wait.append(Gtk.Label(label="En cola en Steam…"))
+            row.append(wait)
+        elif status == "downloading":
+            bar = Gtk.ProgressBar(hexpand=True, valign=Gtk.Align.CENTER, show_text=True,
+                                  text=f"Descargando {frac:.0%}", fraction=frac)
+            row.append(bar)
+        else:
+            btn = Gtk.Button(label="Suscribirse", hexpand=True)
+            btn.add_css_class("suggested-action")
+            btn.add_css_class("pill")
+            btn.connect("clicked", lambda *_: self.subscribe(it))
+            row.append(btn)
+        page = Gtk.Button(icon_name="adw-external-link-symbolic", tooltip_text="Ver en Steam")
+        page.add_css_class("circular")
+        page.connect("clicked", lambda *_: self.steam(
+            f"steam://url/CommunityFilePage/{it['id']}",
+            f"https://steamcommunity.com/sharedfiles/filedetails/?id={it['id']}"))
+        row.append(page)
+        box.append(row)
+
+    # ── Acciones ──
+    def toast(self, text):
+        self.toasts.add_toast(Adw.Toast(title=text, timeout=4))
+
+    def connector(self):
+        sel = self.out_row.get_selected() if self.outs and hasattr(self, "out_row") else 0
+        return "*" if sel == 0 or not self.outs else self.outs[sel - 1]
+
+    def run_bg(self, label, fn, *args):
+        if label:
+            self.toast(label)
+
+        def work():
+            try:
+                msg = fn(*args)
+            except subprocess.CalledProcessError as e:
+                msg = f"Error: {(e.stderr or e.stdout or str(e)).strip()[:160]}"
+            except Exception as e:  # noqa: BLE001
+                msg = f"Error: {e}"
+            GLib.idle_add(self.toast, msg)
+            GLib.timeout_add_seconds(1, lambda: (self.refresh_active(), False)[1])
+            GLib.timeout_add_seconds(4, lambda: (self.refresh_active(), False)[1])
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def apply(self, item, from_sidebar=False):
+        conn = self.connector() if from_sidebar else "*"
+        if from_sidebar and self.editor and self.selected is item:
+            self.editor.save()
+        self.history[item["id"]] = int(time.time())
+        write_json(HISTORY_FILE, self.history)
+        if LIB_SORTS[self.lib_sort.get_selected()][0] == "used":
+            self.flow.invalidate_sort()
+        if item["type"] == "video":
+            self.run_bg(f"Aplicando «{item['title']}»…", apply_video, item["file"], conn,
+                        saved_scaling(item["id"]))
+        else:
+            note = " (falló en la prueba, puede no funcionar)" if item["compat"] == "fail" else ""
+            props = {**item["preset"], **saved_props(item["id"])}
+            self.run_bg(f"Aplicando «{item['title']}»…{note}", apply_scene, item["target"], conn, props,
+                        item["type"], saved_scaling(item["id"]), saved_mute(item["id"]))
+
+    def live_apply(self, item):
+        """Si el fondo está en pantalla, lo vuelve a poner con los cambios. Espera a que se deje
+        de tocar (un deslizador cambia muchas veces por segundo y cada cambio reinicia el motor)."""
+        if self.live_src:
+            GLib.source_remove(self.live_src)
+        self.live_src = GLib.timeout_add(800, self._live_apply, item)
+
+    def _live_apply(self, item):
+        self.live_src = 0
+        conns = None if item["preset"] else active_ids().get(self.item_key(item))
+        if conns and item["type"] == "video":  # mpv cambia el ajuste en caliente, sin reiniciar el video
+            def video_work():
+                for conn in conns:
+                    set_video_scaling(conn, saved_scaling(item["id"]), wait=1)
+                return "Cambios aplicados en pantalla"
+            self.run_bg(None, video_work)
+        elif conns:
+            where = ["*"] if "*" in conns or set(self.outs) <= set(conns) else conns
+            props = {**item["preset"], **saved_props(item["id"])}
+
+            def work():
+                for conn in where:
+                    apply_scene(item["target"], conn, props, item["type"], saved_scaling(item["id"]),
+                                saved_mute(item["id"]))
+                return "Cambios aplicados en pantalla"
+            self.run_bg(None, work)
+        return False
+
+    def shuffle(self, *_):
+        active = active_ids()
+        pool = [c.item for c in children(self.flow) if self.filter(c) and playable(c.item)
+                and c.item["compat"] != "fail" and self.item_key(c.item) not in active]
+        if not pool:
+            return self.toast("No hay otro fondo compatible entre los que se ven")
+        self.apply(random.choice(pool))
+
+    def preview(self, item):
+        if self.editor and self.selected is item:
+            self.editor.save()
+        engine = shutil.which("linux-wallpaperengine-web") or shutil.which("linux-wallpaperengine")
+        if not engine:
+            return self.toast("linux-wallpaperengine no está instalado")
+        cmd = [engine, "--window", "0x0x1280x720"]
+        for k, v in {**item["preset"], **saved_props(item["id"])}.items():
+            cmd += ["--set-property", f"{k}={int(v) if isinstance(v, bool) else v}"]
+        subprocess.Popen(cmd + [item["target"]], start_new_session=True, cwd=str(HOME),
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.toast("Abriendo vista previa en una ventana…")
+
+    def find(self, item_id):
+        return next(i for i in self.items if i["id"] == item_id)
+
+    def apply_action(self, _action, param):
+        self.apply(self.find(param.get_string()))
+
+    def preview_action(self, _action, param):
+        self.preview(self.find(param.get_string()))
+
+    def stop(self, *_):
+        self.run_bg("Deteniendo…", stop_all)
+
+    def engine_settings(self, *_):
+        """Ajustes de linux-wallpaperengine (escenas y web). Se aplican solos al cambiarlos."""
+        cfg = engine_config()
+        dlg = Adw.PreferencesDialog(title="Ajustes", search_enabled=False)
+        page = Adw.PreferencesPage(title="Ajustes", icon_name="preferences-system-symbolic")
+        dlg.add(page)
+        pending = {"src": 0}
+
+        def commit():
+            pending["src"] = 0
+            snapshot = dict(cfg)
+
+            def work():
+                try:
+                    save_engine_config(snapshot)
+                    msg = "Ajustes aplicados" if read_json(WE_STATE, {}).get("assignments") else "Ajustes guardados"
+                except (OSError, subprocess.SubprocessError) as e:
+                    msg = f"No se pudieron aplicar: {e}"
+                GLib.idle_add(lambda: (dlg.add_toast(Adw.Toast(title=msg, timeout=2)), False)[1])
+            threading.Thread(target=work, daemon=True).start()
+            return False
+
+        def changed(key, value):
+            if cfg[key] == value:
+                return
+            cfg[key] = value
+            if pending["src"]:
+                GLib.source_remove(pending["src"])
+            pending["src"] = GLib.timeout_add(700, commit)  # cada cambio reinicia los fondos
+
+        def switch(group, key, title, subtitle=None):
+            row = Adw.SwitchRow(title=title, subtitle=subtitle or "", active=bool(cfg[key]))
+            row.connect("notify::active", lambda r, *_: changed(key, r.get_active()))
+            group.add(row)
+            return row
+
+        def combo(group, key, title, options, subtitle=None):
+            keys = [k for k, _label in options]
+            row = Adw.ComboRow(title=title, subtitle=subtitle or "",
+                               model=Gtk.StringList.new([label for _k, label in options]),
+                               selected=keys.index(cfg[key]) if cfg[key] in keys else 0)
+            row.connect("notify::selected", lambda r, *_: changed(key, keys[r.get_selected()]))
+            group.add(row)
+
+        perf = Adw.PreferencesGroup(title="Rendimiento",
+                                    description="Afectan a las escenas y los fondos web.")
+        fps = Adw.SpinRow.new_with_range(5, 240, 5)
+        fps.set_title("FPS máximos")
+        fps.set_subtitle("Menos FPS, menos CPU y GPU")
+        fps.set_value(int(cfg["fps"]))
+        fps.connect("notify::value", lambda r, *_: changed("fps", int(r.get_value())))
+        perf.add(fps)
+        switch(perf, "particles", "Partículas", "Lluvia, chispas, nieve… son lo que más GPU gasta")
+        combo(perf, "fullscreen_pause", "Pausar al haber pantalla completa", FULLSCREEN_PAUSE)
+        page.add(perf)
+
+        screen = Adw.PreferencesGroup(title="Pantalla")
+        combo(screen, "scaling", "Ajuste predeterminado", ENGINE_SCALINGS,
+              "Cada fondo puede elegir el suyo en su panel")
+        page.add(screen)
+
+        sound = Adw.PreferencesGroup(title="Sonido")
+        mute = switch(sound, "mute", "Silenciar los fondos")
+        vol_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 5)
+        vol_scale.set_value(int(cfg["volume"]))
+        vol_scale.set_draw_value(True)
+        vol_scale.set_value_pos(Gtk.PositionType.LEFT)
+        vol_scale.set_hexpand(True)
+        vol_scale.set_size_request(180, -1)
+        vol_scale.set_valign(Gtk.Align.CENTER)
+        vol_scale.connect("value-changed", lambda sc: changed("volume", int(sc.get_value())))
+        volume = Adw.ActionRow(title="Volumen")
+        volume.add_suffix(vol_scale)
+        sound.add(volume)
+        automute = switch(sound, "automute", "Bajar el sonido si otra app suena")
+        switch(sound, "audio_reactive", "Reaccionar al audio",
+               "Visualizadores y efectos que se mueven con la música del sistema")
+        for row in (volume, automute):
+            mute.bind_property("active", row, "visible", GObject.BindingFlags.SYNC_CREATE
+                               | GObject.BindingFlags.INVERT_BOOLEAN)
+        page.add(sound)
+
+        touch = Adw.PreferencesGroup(title="Interacción")
+        switch(touch, "mouse", "Responder al ratón")
+        switch(touch, "parallax", "Efecto parallax", "Las capas se desplazan un poco al mover el ratón")
+        page.add(touch)
+
+        videos = Adw.PreferencesGroup(
+            title="Videos", description="Los videos los pone el plugin oficial noctalia/mpvpaper; "
+                                        "su sonido y decodificación se ajustan en Noctalia.")
+        open_mpv = Adw.ActionRow(title="Ajustes de mpvpaper en Noctalia", activatable=True)
+        open_mpv.add_suffix(Gtk.Image(icon_name="adw-external-link-symbolic"))
+
+        def open_noctalia(*_):
+            try:
+                nmsg("settings-open-plugin", MPV_PLUGIN)
+            except (OSError, subprocess.SubprocessError):
+                dlg.add_toast(Adw.Toast(title="No se pudieron abrir los ajustes de Noctalia"))
+        open_mpv.connect("activated", open_noctalia)
+        videos.add(open_mpv)
+        page.add(videos)
+
+        def closed(*_):
+            if pending["src"]:  # aplicar lo que quedaba pendiente
+                GLib.source_remove(pending["src"])
+                commit()
+            if self.selected and "dir" in self.selected and self.split.get_show_sidebar():
+                self.show_detail(self.selected)  # el «Predeterminado» del panel cambia
+        dlg.connect("closed", closed)
+        dlg.present(self)
+
+    def run_compat(self, *_):
+        self.toast("Probando fondos nuevos; puede tardar unos minutos…")
+
+        def work():
+            subprocess.run([sys.executable, "-I", str(COMPAT_TEST)], capture_output=True)
+            GLib.idle_add(self.reload)
+            GLib.idle_add(self.toast, "Prueba de compatibilidad terminada")
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def copy_item(self, _action, param):
+        item = self.find(param.get_string())
+        if not item["file"]:
+            return self.toast("Este fondo no es un video")
+        VIDEO_DIR.mkdir(parents=True, exist_ok=True)
+        safe = re.sub(r'[\\/:*?"<>|]+', "_", item["title"]).strip() or item["id"]
+        dest = VIDEO_DIR / f"{safe}{item['file'].suffix}"
+        shutil.copy2(item["file"], dest)
+        self.toast(f"Copiado a {dest.name}")
+
+    def open_folder(self, _action, param):
+        Gio.AppInfo.launch_default_for_uri(self.find(param.get_string())["dir"].as_uri(), None)
+
+    def workshop_page(self, _action, param):
+        self.steam(f"steam://url/CommunityFilePage/{param.get_string()}",
+                   f"https://steamcommunity.com/sharedfiles/filedetails/?id={param.get_string()}")
+
+    def open_workshop(self, *_):
+        self.steam(f"steam://url/SteamWorkshopPage/{WE_APPID}",
+                   f"https://steamcommunity.com/app/{WE_APPID}/workshop/")
+
+    @staticmethod
+    def steam(uri, web):
+        if shutil.which("steam"):
+            subprocess.Popen(["steam", uri], start_new_session=True,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            Gio.AppInfo.launch_default_for_uri(web, None)
+
+
+class App(Adw.Application):
+    def __init__(self):
+        super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
+
+    def do_activate(self):
+        win = self.props.active_window
+        if not win:
+            provider = Gtk.CssProvider()
+            provider.load_from_data(CSS)
+            Gtk.StyleContext.add_provider_for_display(
+                Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            win = Window(self)
+        win.present()
+
+
+if __name__ == "__main__":
+    sys.exit(App().run(sys.argv))

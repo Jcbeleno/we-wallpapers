@@ -1,0 +1,22 @@
+# Fondos scene/web de Wallpaper Engine. Un [[service]] lanza un
+# linux-wallpaperengine por salida y pide a Noctalia que no dibuje su propio fondo
+# ahí (igual que noctalia/mpvpaper). La app WE Wallpapers lo controla por IPC:
+#   noctalia msg plugin jucabego/wallpaper-engine:service all set '{"connector":"*","id":"123","props":{}}'
+#   noctalia msg plugin jucabego/wallpaper-engine:service all clear [connector]
+#   noctalia msg plugin jucabego/wallpaper-engine:service all config   (relee ~/.config/we-mpvpaper/engine.json)
+# Los ajustes (FPS, sonido, pausa...) se editan en la app WE Wallpapers, no en Noctalia.
+
+id = "jucabego/wallpaper-engine"
+name = "Wallpaper Engine"
+version = "1.1.0"
+plugin_api = 9
+author = "jucabego"
+license = "MIT"
+dependencies = ["linux-wallpaperengine"]
+tags = ["wallpaper"]
+icon = "wallpaper"
+description = "Fondos scene y web de Wallpaper Engine con linux-wallpaperengine."
+
+[[service]]
+id = "service"
+entry = "service.luau"

@@ -1,0 +1,10 @@
+[[plugin]]
+id = "jucabego/wallpaper-engine"
+name = "Wallpaper Engine"
+version = "1.0.0"
+author = "jucabego"
+license = "MIT"
+icon = "wallpaper"
+description = "Fondos scene y web de Wallpaper Engine con linux-wallpaperengine."
+plugin_api = 9
+tags = ["wallpaper"]

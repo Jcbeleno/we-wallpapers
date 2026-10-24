@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=WE Wallpapers
+GenericName=Fondos animados
+Comment=Fondos de Wallpaper Engine y su Steam Workshop: videos, scenes y web
+Exec=/home/jucabego/.local/bin/we-mpvpaper
+Icon=preferences-desktop-wallpaper
+Categories=Utility;GTK;
+StartupWMClass=dev.jucabego.WeMpvpaper
+Keywords=wallpaper;fondo;workshop;steam;wallpaper engine;
