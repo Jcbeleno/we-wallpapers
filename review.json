@@ -1,12 +1,65 @@
 {
  "_doc": "Revisión a ojo de las capturas de tests/compare_engines.py: corrige el veredicto automático. Clave: id del Workshop o nombre de la carpeta de un fondo oficial; status ok | partial | fail.",
- "3509243656": {"ww": {"status": "partial", "note": "Algunas piezas salen mal colocadas"}},
- "3742442017": {"ww": {"status": "partial", "note": "Se ve distinto que en linux-wallpaperengine (sol blanco en vez de olas): por confirmar"}},
- "3747222633": {"ww": {"status": "ok", "note": "Reacciona al audio: sin sonido se ve casi negro"},
-                "lwe": {"status": "ok", "note": "Reacciona al audio: sin sonido se ve casi negro"}},
- "audiophile": {"ww": {"status": "ok", "note": "Reacciona al audio: sin sonido se ve negro"}},
- "corsair_collection": {"ww": {"status": "partial", "note": "Solo el logo: falta la animación de circuitos"}},
- "shimmering_particles": {"ww": {"status": "fail", "note": "Se queda en negro"}},
- "arsenal": {"ww": {"status": "fail", "note": "No llega a dibujar (error de textura _rt_Reflection)"}},
- "techno": {"ww": {"status": "fail", "note": "Solo un color azul fijo"}}
+ "3509243656": {
+  "ww": {
+   "status": "partial",
+   "note": "Algunas piezas salen mal colocadas"
+  }
+ },
+ "3742442017": {
+  "ww": {
+   "status": "partial",
+   "note": "Se ve distinto que en linux-wallpaperengine (sol blanco en vez de olas): por confirmar"
+  }
+ },
+ "3747222633": {
+  "ww": {
+   "status": "ok",
+   "note": "Reacciona al audio: sin sonido se ve casi negro"
+  },
+  "lwe": {
+   "status": "ok",
+   "note": "Reacciona al audio: sin sonido se ve casi negro"
+  }
+ },
+ "audiophile": {
+  "ww": {
+   "status": "ok",
+   "note": "Reacciona al audio: sin sonido se ve negro"
+  }
+ },
+ "corsair_collection": {
+  "ww": {
+   "status": "partial",
+   "note": "Solo el logo: falta la animación de circuitos"
+  }
+ },
+ "shimmering_particles": {
+  "ww": {
+   "status": "fail",
+   "note": "Se queda en negro"
+  }
+ },
+ "arsenal": {
+  "ww": {
+   "status": "fail",
+   "note": "No llega a dibujar (error de textura _rt_Reflection)"
+  }
+ },
+ "techno": {
+  "ww": {
+   "status": "fail",
+   "note": "Solo un color azul fijo"
+  }
+ },
+ "3530181117": {
+  "ww": {
+   "status": "partial",
+   "note": "Se queda con zoom 3x: open-wallpaper-engine no anima el zoom general de la escena (general.zoom)"
+  },
+  "lwe": {
+   "status": "partial",
+   "note": "Encuadre correcto, pero sin luces volumétricas ni formas 3D"
+  }
+ }
 }
