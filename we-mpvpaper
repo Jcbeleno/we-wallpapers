@@ -733,11 +733,10 @@ def apply_scene(item_id, connector, props, kind="scene", scaling="", mute=None):
     # Versión parcheada (~/Proyectos/linux-wallpaperengine, rama web-fixes) si existe.
     cmd = [shutil.which("linux-wallpaperengine-web") or "linux-wallpaperengine"]
     for o in sorted(targets(connector, outs)) or ["*"]:
-        cmd += ["--screen-root", o, "--bg", bg]
+        # --scaling vale para la --screen-root anterior: detrás de cada una (ver el plugin)
+        cmd += ["--screen-root", o, "--bg", bg] + (["--scaling", scaling] if scaling else [])
     for k, v in props.items():
         cmd += ["--set-property", f"{k}={int(v) if isinstance(v, bool) else v}"]
-    if scaling:
-        cmd += ["--scaling", scaling]
     subprocess.Popen(cmd + ["--layer", "background"] + ([] if mute is False else ["--silent"]), start_new_session=True,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(HOME))
     return "Aplicado con linux-wallpaperengine"

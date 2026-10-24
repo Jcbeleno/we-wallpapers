@@ -132,17 +132,19 @@ local function buildCommand(names, a, shot)
   local engine = "linux-wallpaperengine"
   if noctalia.fileExists(PATCHED_ENGINE) then engine = PATCHED_ENGINE end
   local args = { engine }
+  -- Ajuste elegido para este fondo en WE Wallpapers, si no el general. El motor aplica --scaling a la
+  -- --screen-root anterior: va detrás de cada salida. Puesto una sola vez al final, solo valía para la
+  -- última, y con ajustes distintos el motor no comparte la escena: una por pantalla, cada una con su audio.
+  local scaling = a.scaling or cfg("scaling", "fill")
   for _, name in ipairs(names) do
     table.insert(args, "--screen-root"); table.insert(args, name)
     table.insert(args, "--bg"); table.insert(args, a.id)
+    if scaling ~= "default" then
+      table.insert(args, "--scaling"); table.insert(args, scaling)
+    end
   end
   table.insert(args, "--layer"); table.insert(args, "background")
   table.insert(args, "--fps"); table.insert(args, tostring(cfg("fps", 30)))
-  -- Ajuste elegido para este fondo en WE Wallpapers, si no el general.
-  local scaling = a.scaling or cfg("scaling", "fill")
-  if scaling ~= "default" then
-    table.insert(args, "--scaling"); table.insert(args, scaling)
-  end
   -- Silencio elegido para este fondo en WE Wallpapers, si no el general.
   local mute = a.mute
   if mute == nil then mute = cfg("mute", true) end
