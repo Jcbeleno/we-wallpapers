@@ -119,11 +119,23 @@ def apply(folder, connector="*", scaling="", props=None, start=True):
     return wid
 
 
-def pause_outputs(names):
-    outs = displays()
-    for name in names:
-        if name in outs:
-            call("display_pause_set", pb.DisplayPauseSetRequest(display_id=outs[name], paused=True))
+def release_outputs(names):
+    """Quita waywallen de esas salidas. No hay orden para eso: pausar no basta, porque el renderer sigue
+    enlazado y espera a que la pantalla (tapada por otro motor) le devuelva el fotograma, así que se
+    congelaba también en las demás. Se matan los renderers enlazados; devuelve las otras salidas que
+    usaban alguno de ellos (hay que volver a ponerles su fondo)."""
+    gone = set(names)
+    killed, orphans = set(), set()
+    listed = call("display_list", pb.DisplayListRequest()).displays
+    for d in listed:
+        if d.name in gone:
+            killed.update(link.renderer_id for link in d.links)
+    for rid in killed:
+        call("renderer_kill", pb.RendererKillRequest(renderer_id=rid))
+    for d in listed:
+        if d.name not in gone and any(link.renderer_id in killed for link in d.links):
+            orphans.add(d.name)
+    return orphans
 
 
 def stop():

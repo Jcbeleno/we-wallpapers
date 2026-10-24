@@ -794,7 +794,8 @@ def apply_waywallen(folder, connector, key, props, scaling="", mute=None):
     host_wallpaper(targets(connector, outs), False)
     cur = read_json(WW_STATE, {})
     write_json(WW_STATE, {**({} if connector == "*" else expand(cur, outs)),
-                          **{o: key for o in targets(connector, outs)}})
+                          **{o: {"key": key, "folder": str(folder), "scaling": scaling, "props": props}
+                             for o in targets(connector, outs)}})
     return "Aplicado con waywallen"
 
 
@@ -816,7 +817,10 @@ def release_ww(connector, outs):
         new.pop(o, None)
     try:
         if new:
-            waywallen.pause_outputs(gone)
+            # los renderers de esas salidas mueren con ellas: las que los compartían recuperan su fondo
+            for o in waywallen.release_outputs(gone) & set(new):
+                w = new[o]
+                waywallen.apply(w["folder"], o, w.get("scaling") or engine_config()["scaling"], w.get("props"))
         else:
             waywallen.stop()
     except (OSError, TimeoutError, waywallen.Error):
@@ -841,8 +845,9 @@ def active_ids():
             active.setdefault(str(v["id"]), []).append(conn)
     for conn, path in read_json(MPV_STATE, {}).get("assignments", {}).items():
         active.setdefault(str(path), []).append(conn)
-    for conn, key in read_json(WW_STATE, {}).items():
-        active.setdefault(str(key), []).append(conn)
+    for conn, w in read_json(WW_STATE, {}).items():
+        if isinstance(w, dict):  # las de antes guardaban solo la clave: sin carpeta no se pueden reponer
+            active.setdefault(str(w["key"]), []).append(conn)
     return active
 
 
@@ -2547,7 +2552,8 @@ class Window(Adw.ApplicationWindow):
     def _live_apply(self, item):
         self.live_src = 0
         conns = None if item["preset"] else active_ids().get(self.item_key(item))
-        ww_conns = {o for o, key in read_json(WW_STATE, {}).items() if key == self.item_key(item)}
+        ww_conns = {o for o, w in read_json(WW_STATE, {}).items()
+                    if isinstance(w, dict) and w["key"] == self.item_key(item)}
         if conns and ww_conns:  # waywallen cambia ajuste y propiedades en vivo
             props = {**item["preset"], **saved_props(item["id"])}
             self.run_bg(None, lambda: (update_waywallen(item["folder"], saved_scaling(item["id"]), props,
