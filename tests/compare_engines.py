@@ -144,7 +144,13 @@ def main():
     ap.add_argument("--engines", default="lwe,ww")
     ap.add_argument("--only", default="")
     ap.add_argument("--warm", type=int, default=WARM, help="s antes de la primera captura")
+    ap.add_argument("--export", nargs="*", metavar="results.json",
+                    help="solo exportar a la app resultados ya hechos (en orden: los últimos mandan)")
     a = ap.parse_args()
+    if a.export is not None:
+        for path in a.export:
+            export(json.loads(Path(path).read_text()))
+        return
     only = set(filter(None, a.only.split(",")))
     items = [i for i in inventory() if not only or i["key"] in only or Path(i["dir"]).name in only]
     OUT.mkdir(parents=True, exist_ok=True)
@@ -219,6 +225,42 @@ def main():
         if prev_mpv:
             app["set_mpv_assignments"](prev_mpv)
         report(results)
+        export(results)
+
+
+CACHE = HOME / ".cache/we-mpvpaper"
+
+
+def status_of(verdict):
+    if verdict.startswith(("nada", "crash", "no lo encuentra")):
+        return "fail"
+    return "partial" if "con errores" in verdict else "ok"
+
+
+def export(results):
+    """Pasa a la app (~/.cache/we-mpvpaper/engines.json) el estado de cada fondo en cada motor y su
+    captura, ya sin la barra de Noctalia, para usarla de miniatura. review.json corrige a mano."""
+    db_path, shots = CACHE / "engines.json", CACHE / "engine-shots"
+    shots.mkdir(parents=True, exist_ok=True)
+    db = json.loads(db_path.read_text()) if db_path.is_file() else {}
+    review = json.loads((ROOT / "review.json").read_text())
+    for key, r in results.items():
+        name = Path(key).name
+        for engine in ("lwe", "ww"):
+            e = r.get(engine)
+            if not e or not e.get("verdict"):
+                continue
+            entry = {"status": status_of(e["verdict"]), "verdict": e["verdict"], "errors": e.get("errors", [])}
+            src = ROOT / "tests/results" / e["shot"] if e.get("shot") else None
+            img = Image.open(src) if src and src.is_file() and entry["status"] != "fail" else None
+            # casi negra: fondo que reacciona al audio probado sin sonido; mejor la vista previa del autor
+            if img and ImageStat.Stat(img.convert("L")).mean[0] >= 18:
+                out = shots / f"{engine}-{re.sub(r'[^\w.-]', '_', name)}.jpg"
+                img.crop((0, img.height * 3 // 100, img.width, img.height)).save(out, quality=88)
+                entry["shot"] = str(out)
+            entry.update((review.get(name) or {}).get(engine) or {})
+            db.setdefault(key, {})[engine] = entry
+    db_path.write_text(json.dumps(db, indent=1, ensure_ascii=False))
 
 
 def report(results):

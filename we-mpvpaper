@@ -240,6 +240,12 @@ def load_items():
             "projection": None if c is None else c.get("projection"),
             "props": props,
         })
+    # Estado y captura del motor que de verdad lo va a dibujar (tests/compare_engines.py, revisado a
+    # mano en review.json). Sin prueba de ese motor se queda lo de compat-test (linux-wallpaperengine).
+    engines = read_json(CACHE_DIR / "engines.json", {})
+    for item in items:
+        item["compat_test"] = (item["compat"], item["issues"], item["shot"])  # lo de compat-test, sin motor
+        engine_status(item, engines)
     # Los que funcionan primero, luego los parciales y al final los que no.
     items.sort(key=lambda i: (i["compat"] == "fail" or not playable(i), i["compat"] == "partial",
                               i["title"].lower()))
@@ -735,6 +741,23 @@ def apply_scene(item_id, connector, props, kind="scene", scaling="", mute=None):
     subprocess.Popen(cmd + ["--layer", "background"] + ([] if mute is False else ["--silent"]), start_new_session=True,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(HOME))
     return "Aplicado con linux-wallpaperengine"
+
+
+def engine_status(item, engines=None):
+    """Estado, motivo y captura del fondo con el motor que lo va a dibujar."""
+    item["compat"], item["issues"], item["shot"] = item["compat_test"]
+    engine = engine_for(item)
+    tested = (read_json(CACHE_DIR / "engines.json", {}) if engines is None else engines).get(
+        item["target"], {}).get(engine)
+    if not tested:
+        return
+    name = "waywallen" if engine == "ww" else "linux-wallpaperengine"
+    item["compat"] = tested["status"]
+    item["issues"] = ([tested["note"]] if tested.get("note") else [] if tested["status"] == "ok" else
+                      [f"Se ve, pero {name} registró errores: puede faltar algún efecto"]
+                      if tested["status"] == "partial" else [f"No se dibujó en la prueba con {name}"])
+    if tested.get("shot") and Path(tested["shot"]).is_file():
+        item["shot"] = Path(tested["shot"])
 
 
 def waywallen_available():
@@ -1589,7 +1612,8 @@ class Window(Adw.ApplicationWindow):
             row.append(fab)
         shade.append(row)
         overlay.add_overlay(shade)
-        overlay.set_tooltip_text(title)
+        if len(title) > 40:  # solo si el título no cabe; si no, repite lo que ya se lee
+            overlay.set_tooltip_text(title)
 
     def fab(self, icon, tooltip, callback):
         btn = Gtk.Button(icon_name=icon, valign=Gtk.Align.END, tooltip_text=tooltip)
@@ -2144,6 +2168,8 @@ class Window(Adw.ApplicationWindow):
             if keys[row.get_selected()]:
                 data[item["id"]] = keys[row.get_selected()]
             write_json(ENGINES_FILE, data)
+            engine_status(item)
+            GLib.idle_add(self.show_detail, item)  # estado y captura del otro motor (no dentro del propio combo)
             if not item["preset"] and active_ids().get(self.item_key(item)):
                 self.apply(item, from_sidebar=True)  # en pantalla: se pasa al otro motor ya
         row.connect("notify::selected", changed)
@@ -2337,12 +2363,14 @@ class Window(Adw.ApplicationWindow):
 
         # Información
         info = Adw.PreferencesGroup(title="Información")
-        engine = {"video": "mpvpaper", "scene": "linux-wallpaperengine",
-                  "web": "linux-wallpaperengine (Chromium)",
-                  "application": "Ninguno (programa de Windows)"}.get(item["type"], "—")
+        # El motor ya lo dice el selector «Motor»: aquí, lo que pasó al probarlo con ese motor.
+        test = (("Motor", "Ninguno (programa de Windows)") if item["type"] == "application" else
+                ("Prueba", item["issues"][0] if item["issues"] else
+                 {"ok": "Se vio y se animó bien", "partial": "Se ve a medias", "fail": "No se dibujó"}.get(
+                     item["compat"], "Sin probar")))
         origin = ("Workshop", item["id"]) if item["source"] == "workshop" else ("Origen", "Incluido en Wallpaper Engine")
         size_row = Adw.ActionRow(title="Tamaño", subtitle="Calculando…")
-        for title, value in (origin, ("Motor", engine)):
+        for title, value in (origin, test):
             row = Adw.ActionRow(title=title, subtitle=value, subtitle_selectable=True)
             row.add_css_class("property")
             info.add(row)
