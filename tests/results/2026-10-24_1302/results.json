@@ -1,0 +1,682 @@
+{
+ "1319382691": {
+  "key": "1319382691",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1319382691",
+  "kind": "scene",
+  "title": "Firewatch Night",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1319382691/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 57.4,
+   "motion": 0.26,
+   "vs_empty": 42.91,
+   "vs_prev": null,
+   "errors": [],
+   "secs": 22.5,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-1319382691-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 57.3,
+   "motion": 0.32,
+   "vs_empty": 42.8,
+   "vs_prev": null,
+   "errors": [],
+   "secs": 22.8,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-1319382691-a.jpg"
+  }
+ },
+ "1922177752": {
+  "key": "1922177752",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1922177752",
+  "kind": "scene",
+  "title": "Firewatch (clock, snow,)",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1922177752/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 55.0,
+   "motion": 0.1,
+   "vs_empty": 41.83,
+   "vs_prev": 2.48,
+   "errors": [],
+   "secs": 22.5,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-1922177752-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 54.9,
+   "motion": 0.13,
+   "vs_empty": 41.76,
+   "vs_prev": 2.5,
+   "errors": [],
+   "secs": 23.0,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-1922177752-a.jpg"
+  }
+ },
+ "2801953171": {
+  "key": "2801953171",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2801953171",
+  "kind": "scene",
+  "title": "Escape",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2801953171/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 29.4,
+   "motion": 0.25,
+   "vs_empty": 21.58,
+   "vs_prev": 37.78,
+   "errors": [],
+   "secs": 22.6,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-2801953171-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 33.8,
+   "motion": 0.41,
+   "vs_empty": 23.4,
+   "vs_prev": 37.75,
+   "errors": [],
+   "secs": 23.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-2801953171-a.jpg"
+  }
+ },
+ "3509243656": {
+  "key": "3509243656",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3509243656",
+  "kind": "scene",
+  "title": "三体实时演算 | Three-Body problem - SYKM",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3509243656/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 21.56,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-3509243656-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 6.4,
+   "motion": 0.17,
+   "vs_empty": 23.28,
+   "vs_prev": 26.92,
+   "errors": [
+    "ERROR] script[100332f948fbe9db3e047ae99a567598a0e0f2ed] stack:",
+    "ERROR] script[100332f948fbe9db3e047ae99a567598a0e0f2ed] update threw: TypeError: cannot read property 'toFixed' of undefined",
+    "ERROR] script[3ec903192db2be817cf7f9197448b35aac6cf9a6] stack:",
+    "ERROR] script[3ec903192db2be817cf7f9197448b35aac6cf9a6] update threw: ReferenceError: createLayer asset is unavailable",
+    "ERROR] script[4fe3af0a7ce935bd1a9b565e669795c2555408ce] stack:",
+    "ERROR] script[4fe3af0a7ce935bd1a9b565e669795c2555408ce] update threw: TypeError: cannot read property 'toFixed' of undefined",
+    "ERROR] script[53ea6baf1815a0b7b43db7c1285bba8e56066e6e] stack:",
+    "ERROR] script[53ea6baf1815a0b7b43db7c1285bba8e56066e6e] update threw: TypeError: cannot read property 'toFixed' of undefined"
+   ],
+   "secs": 24.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-3509243656-a.jpg"
+  }
+ },
+ "3562113589": {
+  "key": "3562113589",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3562113589",
+  "kind": "scene",
+  "title": "Relaxing Sci-Fi LiminalSpace.",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3562113589/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 19.2,
+   "motion": 0.23,
+   "vs_empty": 16.54,
+   "vs_prev": 16.54,
+   "errors": [],
+   "secs": 22.8,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-3562113589-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 19.1,
+   "motion": 0.39,
+   "vs_empty": 16.37,
+   "vs_prev": 23.26,
+   "errors": [],
+   "secs": 23.1,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-3562113589-a.jpg"
+  }
+ },
+ "3684018768": {
+  "key": "3684018768",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3684018768",
+  "kind": "scene",
+  "title": "Before the Road",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3684018768/gifscene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 26.2,
+   "motion": 0.04,
+   "vs_empty": 20.48,
+   "vs_prev": 23.78,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-3684018768-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 26.2,
+   "motion": 0.07,
+   "vs_empty": 20.49,
+   "vs_prev": 23.87,
+   "errors": [],
+   "secs": 22.4,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-3684018768-a.jpg"
+  }
+ },
+ "3742442017": {
+  "key": "3742442017",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3742442017",
+  "kind": "scene",
+  "title": "Skyline Flow | Seyul",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3742442017/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 59.3,
+   "motion": 5.86,
+   "vs_empty": 102.87,
+   "vs_prev": 110.32,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-3742442017-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 68.0,
+   "motion": 0.0,
+   "vs_empty": 100.64,
+   "vs_prev": 108.44,
+   "errors": [
+    "ERROR: 10 compilation errors.  No code generated.",
+    "ERROR: 2 compilation errors.  No code generated.",
+    "ERROR: ww:500: ' temp float' : cannot construct with these arguments ",
+    "ERROR: ww:500: 'constructor' : can't convert ",
+    "ERROR: ww:500: 'declaration' : Expected ",
+    "ERROR: ww:500: 'expression' : Expected ",
+    "ERROR: ww:500: 'initializer' : Expected ",
+    "ERROR: ww:501: ' temp float' : cannot construct with these arguments "
+   ],
+   "secs": 22.8,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-3742442017-a.jpg"
+  }
+ },
+ "3747222633": {
+  "key": "3747222633",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3747222633",
+  "kind": "web",
+  "title": "音域回响",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3747222633/index.html",
+  "lwe": {
+   "verdict": "nada",
+   "std": 3.7,
+   "motion": 1.39,
+   "vs_empty": 30.66,
+   "vs_prev": 130.53,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 22.4,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-3747222633-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 5.3,
+   "motion": 1.72,
+   "vs_empty": 29.74,
+   "vs_prev": 130.36,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 22.8,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-3747222633-a.jpg"
+  }
+ },
+ "843532366": {
+  "key": "843532366",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/843532366",
+  "kind": "scene",
+  "title": "Aesthetic City",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/843532366/gifscene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 69.5,
+   "motion": 0.07,
+   "vs_empty": 88.34,
+   "vs_prev": 112.0,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-843532366-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 69.5,
+   "motion": 0.12,
+   "vs_empty": 88.33,
+   "vs_prev": 112.05,
+   "errors": [],
+   "secs": 22.5,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-843532366-a.jpg"
+  }
+ },
+ "898191640": {
+  "key": "898191640",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/898191640",
+  "kind": "video",
+  "title": "Amv Naruto",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/898191640/Amv Naruto Shippuden Movie 9 _Menma Vs Naruto.mp4",
+  "lwe": {
+   "verdict": "anima",
+   "std": 15.5,
+   "motion": 18.36,
+   "vs_empty": 9.55,
+   "vs_prev": 92.29,
+   "errors": [],
+   "secs": 22.6,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-898191640-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 24.8,
+   "motion": 25.45,
+   "vs_empty": 18.79,
+   "vs_prev": 90.53,
+   "errors": [],
+   "secs": 22.5,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-898191640-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal",
+  "kind": "scene",
+  "title": "Arsenal",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 11.37,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-arsenal-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 4.0,
+   "motion": 0.0,
+   "vs_empty": 16.43,
+   "vs_prev": 27.15,
+   "errors": [
+    "ERROR waywallen::api::websocket::wire: request 2 failed: renderer did not produce a frame: timed out after 15s waiting for renderer '9d6d0846-02a",
+    "ERROR] frame failed: graph execution error stage=1 pass=0 resource=9 cause=texture error kind=0 native=0: texture error kind=0 native=0",
+    "ERROR] frame resource: _rt_Reflection"
+   ],
+   "secs": 37.4,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-arsenal-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile",
+  "kind": "scene",
+  "title": "Audiophile",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile/audiophile.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 0.0,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-audiophile-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 25.0,
+   "vs_prev": 8.57,
+   "errors": [
+    "ERROR] wallpaper layer 0 already belongs to scene node 1"
+   ],
+   "secs": 22.4,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-audiophile-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection",
+  "kind": "web",
+  "title": "CORSAIR Collection",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 39.2,
+   "motion": 2.18,
+   "vs_empty": 40.2,
+   "vs_prev": 40.2,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-corsair_collection-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 37.4,
+   "motion": 0.0,
+   "vs_empty": 41.53,
+   "vs_prev": 19.44,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 22.8,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-corsair_collection-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space",
+  "kind": "scene",
+  "title": "Deep Space",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 37.0,
+   "motion": 0.08,
+   "vs_empty": 36.86,
+   "vs_prev": 67.08,
+   "errors": [],
+   "secs": 22.5,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-deep_space-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 43.5,
+   "motion": 2.04,
+   "vs_empty": 47.94,
+   "vs_prev": 78.09,
+   "errors": [],
+   "secs": 22.9,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-deep_space-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core",
+  "kind": "scene",
+  "title": "Demon Core",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 36.85,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-demon_core-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 68.5,
+   "motion": 17.14,
+   "vs_empty": 94.97,
+   "vs_prev": 81.32,
+   "errors": [],
+   "secs": 22.7,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-demon_core-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment",
+  "kind": "scene",
+  "title": "DNA Fragment",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 0.0,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-dna_fragment-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 27.8,
+   "motion": 11.27,
+   "vs_empty": 24.35,
+   "vs_prev": 74.65,
+   "errors": [],
+   "secs": 22.8,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-dna_fragment-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar",
+  "kind": "scene",
+  "title": "Fantastic Car",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar/fantasticcar.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 0.0,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-fantasticcar-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 43.6,
+   "motion": 3.09,
+   "vs_empty": 79.13,
+   "vs_prev": 65.31,
+   "errors": [],
+   "secs": 22.7,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-fantasticcar-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset",
+  "kind": "scene",
+  "title": "Neon Sunset",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 0.0,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-neon_sunset-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 43.6,
+   "motion": 17.49,
+   "vs_empty": 29.5,
+   "vs_prev": 89.84,
+   "errors": [],
+   "secs": 22.7,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-neon_sunset-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro",
+  "kind": "scene",
+  "title": "Retro",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 31.2,
+   "motion": 0.23,
+   "vs_empty": 40.09,
+   "vs_prev": 40.09,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-retro-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 27.9,
+   "motion": 0.52,
+   "vs_empty": 89.33,
+   "vs_prev": 92.3,
+   "errors": [],
+   "secs": 22.6,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-retro-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod",
+  "kind": "scene",
+  "title": "Ricepod",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod/ricepod.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 40.09,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-ricepod-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 40.0,
+   "motion": 1.2,
+   "vs_empty": 35.44,
+   "vs_prev": 104.07,
+   "errors": [],
+   "secs": 22.6,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-ricepod-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles",
+  "kind": "scene",
+  "title": "Shimmering Particles",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 88.4,
+   "motion": 39.29,
+   "vs_empty": 85.1,
+   "vs_prev": 85.1,
+   "errors": [],
+   "secs": 22.3,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-shimmering_particles-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 38.0,
+   "vs_prev": 26.05,
+   "errors": [
+    "ERROR] load particleobj 'dust motes' material faild",
+    "ERROR] load particleobj 'small_motes_copy1' material faild",
+    "ERROR] required geometry shader source missing: /assets/shaders/particle.geom"
+   ],
+   "secs": 22.4,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-shimmering_particles-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno",
+  "kind": "scene",
+  "title": "Techno",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno/techno.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "vs_prev": 96.18,
+   "errors": [],
+   "secs": 22.2,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/lwe-techno-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 23.0,
+   "vs_prev": 15.0,
+   "errors": [
+    "ERROR] wallpaper layer 0 already belongs to scene node 1"
+   ],
+   "secs": 22.5,
+   "warm": 20,
+   "shot": "shots/2026-10-24_1302/ww-techno-a.jpg"
+  }
+ }
+}

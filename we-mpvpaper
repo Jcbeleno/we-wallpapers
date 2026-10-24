@@ -45,6 +45,11 @@ MPV_PLUGIN = "noctalia/mpvpaper"
 WE_PLUGIN = "jucabego/wallpaper-engine"
 MPV_STATE = HOME / ".local/state/noctalia/mpvpaper/assignments.json"
 WE_STATE = HOME / ".local/state/we-mpvpaper/assignments.json"
+WW_STATE = HOME / ".local/state/we-mpvpaper/waywallen.json"  # {salida: clave del fondo} puestos con waywallen
+# Motor elegido a mano por fondo ({id: "ww" | "lwe"}); sin elegir manda engine_for().
+ENGINES_FILE = HOME / ".config/we-mpvpaper/engines.json"
+# Fondos que waywallen no dibuja y linux-wallpaperengine/mpvpaper sí, según tests/compare_engines.py
+LWE_ONLY_FILE = Path(__file__).resolve().parent / "lwe-only.json"
 SHARE = HOME / ".local/share/we-mpvpaper"
 PLUGIN_SRC = SHARE / "noctalia-plugins"
 COMPAT_TEST = SHARE / "compat-test.py"
@@ -103,6 +108,12 @@ ITEM_INSTALLED, ITEM_NEEDS_UPDATE, ITEM_DOWNLOADING, ITEM_PENDING = 4, 8, 16, 32
 
 sys.path.insert(0, str(SHARE))
 from steam_ugc import steam_running  # noqa: E402
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:
+    import waywallen  # noqa: E402
+except ImportError:  # sin python-protobuf / python-websockets: solo linux-wallpaperengine y mpvpaper
+    waywallen = None
 
 
 # ── Datos ─────────────────────────────────────────────────────────────────────
@@ -193,13 +204,13 @@ def load_items():
             kind = "video"
         props = (data.get("general") or {}).get("properties") or {}
         # El motor acepta un id del Workshop o la ruta de la carpeta.
-        target, preset = (str(d) if source == "official" else item_id), {}
+        target, preset, folder = (str(d) if source == "official" else item_id), {}, d
         # Preset: configuración guardada de otro fondo (dependency) con sus valores.
         dep = str(data.get("dependency") or "")
         if not kind and dep in raw and isinstance(data.get("preset"), dict):
             parent = raw[dep][1]
             kind = str(parent.get("type", "")).lower()
-            target = dep
+            target, folder = dep, raw[dep][0]
             props = (parent.get("general") or {}).get("properties") or {}
             preset = {k: v for k, v in data["preset"].items() if k in props}
             if kind == "video" and parent.get("file"):
@@ -215,6 +226,7 @@ def load_items():
             "source": source,
             "preset": preset,
             "dir": d,
+            "folder": folder,  # la del fondo de verdad (en un preset, la de su dependency)
             "title": data.get("title") or item_id,
             "type": kind or "?",
             "file": file if file and file.is_file() else None,
@@ -683,6 +695,7 @@ def set_video_scaling(connector, scaling, since=0.0, wait=8.0):
 
 def apply_video(path, connector, scaling=""):
     plugins, outs = enabled_plugins(), outputs()
+    release_ww(connector, outs)
     release_we(connector, plugins)
     path = str(path)
     if MPV_PLUGIN in plugins:
@@ -703,6 +716,7 @@ def apply_video(path, connector, scaling=""):
 def apply_scene(item_id, connector, props, kind="scene", scaling="", mute=None):
     plugins, outs = enabled_plugins(), outputs()
     bg = item_id
+    release_ww(connector, outs)
     release_mpv(connector, outs, plugins)
     if WE_PLUGIN in plugins:
         payload = json.dumps({"connector": connector, "id": bg, "props": props, "kind": kind,
@@ -723,8 +737,75 @@ def apply_scene(item_id, connector, props, kind="scene", scaling="", mute=None):
     return "Aplicado con linux-wallpaperengine"
 
 
+def waywallen_available():
+    return waywallen is not None and shutil.which("waywallen-layer-shell") is not None and any(
+        (root / "app/org.waywallen.waywallen").is_dir()
+        for root in (HOME / ".local/share/flatpak", Path("/var/lib/flatpak")))
+
+
+def engine_for(item):
+    """waywallen es el motor principal (mejores partículas y detalle, dibuja también las escenas 3D);
+    linux-wallpaperengine o mpvpaper solo para lo que waywallen no puede, o si se elige a mano."""
+    own = read_json(ENGINES_FILE, {}).get(item["id"])
+    if own in ("ww", "lwe"):
+        return own if own == "lwe" or waywallen_available() else "lwe"
+    # lwe-only.json guarda el id del Workshop o el nombre de la carpeta de un fondo oficial
+    if not waywallen_available() or Path(str(item["target"])).name in read_json(LWE_ONLY_FILE, []):
+        return "lwe"
+    return "ww"
+
+
+def host_wallpaper(connectors, visible):
+    """Muestra u oculta el fondo de Noctalia, que en la capa de fondo tapa la superficie de waywallen."""
+    for o in connectors:
+        nmsg("plugin", f"{WE_PLUGIN}:service", "all", "host-show" if visible else "host-hide", o, check=False)
+
+
+def apply_waywallen(folder, connector, key, props, scaling="", mute=None):
+    plugins, outs = enabled_plugins(), outputs()
+    release_mpv(connector, outs, plugins)
+    release_we(connector, plugins)
+    if not waywallen.ensure_running():
+        raise RuntimeError("waywallen no arranca (systemctl --user status waywallen)")
+    waywallen.apply(folder, connector, scaling or engine_config()["scaling"], props)
+    waywallen.set_muted(engine_config()["mute"] if mute is None else mute)
+    host_wallpaper(targets(connector, outs), False)
+    cur = read_json(WW_STATE, {})
+    write_json(WW_STATE, {**({} if connector == "*" else expand(cur, outs)),
+                          **{o: key for o in targets(connector, outs)}})
+    return "Aplicado con waywallen"
+
+
+def update_waywallen(folder, scaling="", props=None, mute=None):
+    """Ajuste, propiedades y silencio de un fondo que ya está en pantalla: waywallen los aplica en
+    vivo, sin reiniciar el fondo."""
+    waywallen.apply(folder, scaling=scaling or engine_config()["scaling"], props=props, start=False)
+    waywallen.set_muted(engine_config()["mute"] if mute is None else mute)
+
+
+def release_ww(connector, outs):
+    """Quita waywallen de esas salidas para que otro motor (o el fondo de Noctalia) se vea."""
+    cur = read_json(WW_STATE, {})
+    if not cur or waywallen is None:
+        return
+    new = {} if connector == "*" else expand(cur, outs)
+    gone = [o for o in targets(connector, outs) if o in new or connector == "*"]
+    for o in targets(connector, outs):
+        new.pop(o, None)
+    try:
+        if new:
+            waywallen.pause_outputs(gone)
+        else:
+            waywallen.stop()
+    except (OSError, TimeoutError, waywallen.Error):
+        pass
+    write_json(WW_STATE, new)
+    host_wallpaper(gone, True)
+
+
 def stop_all():
     plugins, outs = enabled_plugins(), outputs()
+    release_ww("*", outs)
     release_we("*", plugins)
     release_mpv("*", outs, plugins)
     return "Fondos animados detenidos"
@@ -738,6 +819,8 @@ def active_ids():
             active.setdefault(str(v["id"]), []).append(conn)
     for conn, path in read_json(MPV_STATE, {}).get("assignments", {}).items():
         active.setdefault(str(path), []).append(conn)
+    for conn, key in read_json(WW_STATE, {}).items():
+        active.setdefault(str(key), []).append(conn)
     return active
 
 
@@ -2043,6 +2126,29 @@ class Window(Adw.ApplicationWindow):
         frame.set_overflow(Gtk.Overflow.HIDDEN)
         return frame, pic
 
+    def engine_row(self, item):
+        """Motor de este fondo: el automático es waywallen salvo lo que solo funciona en el otro."""
+        other = "mpvpaper" if item["type"] == "video" else "linux-wallpaperengine"
+        keys = ["", "ww", "lwe"]
+        own = read_json(ENGINES_FILE, {}).get(item["id"], "")
+        auto = "waywallen" if engine_for({**item, "id": None}) == "ww" else other
+        row = Adw.ComboRow(title="Motor", use_subtitle=True, model=Gtk.StringList.new(
+            [f"Automático ({auto})", "waywallen", other]), selected=keys.index(own) if own in keys else 0)
+        if not waywallen_available():
+            row.set_sensitive(False)
+            row.set_subtitle(f"{other} (waywallen no está instalado)")
+
+        def changed(*_):
+            data = read_json(ENGINES_FILE, {})
+            data.pop(item["id"], None)
+            if keys[row.get_selected()]:
+                data[item["id"]] = keys[row.get_selected()]
+            write_json(ENGINES_FILE, data)
+            if not item["preset"] and active_ids().get(self.item_key(item)):
+                self.apply(item, from_sidebar=True)  # en pantalla: se pasa al otro motor ya
+        row.connect("notify::selected", changed)
+        return row
+
     def mute_row(self, item):
         """Silencio propio del fondo. Se guarda solo si difiere del de Ajustes."""
         general = engine_config()["mute"]
@@ -2175,7 +2281,8 @@ class Window(Adw.ApplicationWindow):
             note = aspect_note(item["projection"], screen) if (current or default) in ("fill", "default") else None
             if note:
                 group.set_description(note)
-            if item["type"] in ("scene", "web"):
+            group.add(self.engine_row(item))
+            if item["type"] in ("scene", "web") or engine_for(item) == "ww":
                 group.add(self.mute_row(item))
         if rows:
             box.append(group)
@@ -2390,7 +2497,11 @@ class Window(Adw.ApplicationWindow):
         write_json(HISTORY_FILE, self.history)
         if LIB_SORTS[self.lib_sort.get_selected()][0] == "used":
             self.flow.invalidate_sort()
-        if item["type"] == "video":
+        if engine_for(item) == "ww":
+            props = {**item["preset"], **saved_props(item["id"])}
+            self.run_bg(f"Aplicando «{item['title']}»…", apply_waywallen, item["folder"], conn,
+                        self.item_key(item), props, saved_scaling(item["id"]), saved_mute(item["id"]))
+        elif item["type"] == "video":
             self.run_bg(f"Aplicando «{item['title']}»…", apply_video, item["file"], conn,
                         saved_scaling(item["id"]))
         else:
@@ -2409,7 +2520,12 @@ class Window(Adw.ApplicationWindow):
     def _live_apply(self, item):
         self.live_src = 0
         conns = None if item["preset"] else active_ids().get(self.item_key(item))
-        if conns and item["type"] == "video":  # mpv cambia el ajuste en caliente, sin reiniciar el video
+        ww_conns = {o for o, key in read_json(WW_STATE, {}).items() if key == self.item_key(item)}
+        if conns and ww_conns:  # waywallen cambia ajuste y propiedades en vivo
+            props = {**item["preset"], **saved_props(item["id"])}
+            self.run_bg(None, lambda: (update_waywallen(item["folder"], saved_scaling(item["id"]), props,
+                                                        saved_mute(item["id"])), "Cambios aplicados en pantalla")[1])
+        elif conns and item["type"] == "video":  # mpv cambia el ajuste en caliente, sin reiniciar el video
             def video_work():
                 for conn in conns:
                     set_video_scaling(conn, saved_scaling(item["id"]), wait=1)

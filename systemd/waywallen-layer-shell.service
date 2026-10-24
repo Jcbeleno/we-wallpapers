@@ -1,0 +1,13 @@
+[Unit]
+Description=waywallen layer-shell display (dibuja waywallen en niri; dentro de Flatpak no hay layer-shell)
+After=waywallen.service
+BindsTo=waywallen.service
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/waywallen-layer-shell
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

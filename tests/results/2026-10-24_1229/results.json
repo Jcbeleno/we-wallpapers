@@ -1,0 +1,2276 @@
+{
+ "1114435022": {
+  "key": "1114435022",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1114435022",
+  "kind": "scene",
+  "title": "Shingeki No Kyojin / Attack On titans Eren",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1114435022/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 74.9,
+   "motion": 2.8,
+   "vs_empty": 72.15,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1114435022-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 69.5,
+   "motion": 6.1,
+   "vs_empty": 73.31,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-1114435022-a.jpg"
+  }
+ },
+ "1173201544": {
+  "key": "1173201544",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1173201544",
+  "kind": "scene",
+  "title": "Saber ' Duel ' Arturia Pendragon [ セイバー ][ Servant ] [ Fate Stay Night ]",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1173201544/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 41.7,
+   "motion": 12.65,
+   "vs_empty": 30.74,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1173201544-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 39.2,
+   "motion": 13.82,
+   "vs_empty": 29.88,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-1173201544-a.jpg"
+  }
+ },
+ "1275867359": {
+  "key": "1275867359",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1275867359",
+  "kind": "scene",
+  "title": "Naruto Rasengan",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1275867359/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 65.2,
+   "motion": 0.61,
+   "vs_empty": 44.91,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-1275867359-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 65.0,
+   "motion": 0.67,
+   "vs_empty": 44.83,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/ww-1275867359-a.jpg"
+  }
+ },
+ "1305472454": {
+  "key": "1305472454",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1305472454",
+  "kind": "scene",
+  "title": "Naruto Guy",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1305472454/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 34.0,
+   "motion": 5.21,
+   "vs_empty": 26.76,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1305472454-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 36.7,
+   "motion": 5.94,
+   "vs_empty": 29.35,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-1305472454-a.jpg"
+  }
+ },
+ "1315534440": {
+  "key": "1315534440",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1315534440",
+  "kind": "scene",
+  "title": "[4K] RetroLake V.13.6",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1315534440/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 41.6,
+   "motion": 3.4,
+   "vs_empty": 30.07,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-1315534440-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 43.4,
+   "motion": 3.45,
+   "vs_empty": 32.03,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-1315534440-a.jpg"
+  }
+ },
+ "1319382691": {
+  "key": "1319382691",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1319382691",
+  "kind": "scene",
+  "title": "Firewatch Night",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1319382691/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 57.6,
+   "motion": 0.23,
+   "vs_empty": 43.21,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1319382691-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 57.6,
+   "motion": 0.15,
+   "vs_empty": 43.13,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-1319382691-a.jpg"
+  }
+ },
+ "1406075299": {
+  "key": "1406075299",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1406075299",
+  "kind": "scene",
+  "title": "Cyberpunk / Synthwave - Space Station 1080p",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1406075299/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 50.5,
+   "motion": 8.05,
+   "vs_empty": 51.11,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-1406075299-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 47.3,
+   "motion": 3.5,
+   "vs_empty": 45.01,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-1406075299-a.jpg"
+  }
+ },
+ "1471496897": {
+  "key": "1471496897",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1471496897",
+  "kind": "scene",
+  "title": "Naruto / Sasuke",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1471496897/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 46.8,
+   "motion": 3.17,
+   "vs_empty": 38.31,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-1471496897-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 46.0,
+   "motion": 2.4,
+   "vs_empty": 38.91,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-1471496897-a.jpg"
+  }
+ },
+ "1522352870": {
+  "key": "1522352870",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1522352870",
+  "kind": "scene",
+  "title": "NARUTO",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1522352870/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 62.4,
+   "motion": 16.04,
+   "vs_empty": 89.62,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-1522352870-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 57.6,
+   "motion": 23.53,
+   "vs_empty": 90.39,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-1522352870-a.jpg"
+  }
+ },
+ "1562402183": {
+  "key": "1562402183",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1562402183",
+  "kind": "scene",
+  "title": "Colourfull Space Walk",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1562402183/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 49.6,
+   "motion": 1.66,
+   "vs_empty": 72.04,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/lwe-1562402183-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 49.6,
+   "motion": 1.65,
+   "vs_empty": 71.9,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-1562402183-a.jpg"
+  }
+ },
+ "1568167762": {
+  "key": "1568167762",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1568167762",
+  "kind": "scene",
+  "title": "Eren Jaeger  Shingeki no Kyojin",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1568167762/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 82.8,
+   "motion": 0.79,
+   "vs_empty": 122.98,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-1568167762-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 82.8,
+   "motion": 0.88,
+   "vs_empty": 122.91,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-1568167762-a.jpg"
+  }
+ },
+ "1612150525": {
+  "key": "1612150525",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1612150525",
+  "kind": "scene",
+  "title": "Trampled Flowers Version 2 I Shingeki No Kyojin",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1612150525/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 75.6,
+   "motion": 10.82,
+   "vs_empty": 131.05,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1612150525-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 80.0,
+   "motion": 10.99,
+   "vs_empty": 125.69,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-1612150525-a.jpg"
+  }
+ },
+ "1746233267": {
+  "key": "1746233267",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1746233267",
+  "kind": "scene",
+  "title": "Shingeki no Kyojin",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1746233267/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 52.0,
+   "motion": 7.49,
+   "vs_empty": 37.59,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1746233267-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 52.7,
+   "motion": 8.54,
+   "vs_empty": 36.47,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-1746233267-a.jpg"
+  }
+ },
+ "1747779570": {
+  "key": "1747779570",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1747779570",
+  "kind": "web",
+  "title": "2AM Cyberpunk City /w System Clock and Customizable Skyscraper Text",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1747779570/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 36.7,
+   "motion": 1.44,
+   "vs_empty": 25.88,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-1747779570-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima con errores",
+   "std": 36.8,
+   "motion": 1.15,
+   "vs_empty": 25.63,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-1747779570-a.jpg"
+  }
+ },
+ "1754771776": {
+  "key": "1754771776",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1754771776",
+  "kind": "scene",
+  "title": "Shingeki no kyojin",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1754771776/gifscene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 73.9,
+   "motion": 8.02,
+   "vs_empty": 56.97,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-1754771776-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 71.1,
+   "motion": 34.3,
+   "vs_empty": 111.48,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/ww-1754771776-a.jpg"
+  }
+ },
+ "1766166406": {
+  "key": "1766166406",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1766166406",
+  "kind": "scene",
+  "title": "Cyberpunk 2077",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1766166406/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 57.8,
+   "motion": 0.82,
+   "vs_empty": 45.46,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-1766166406-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 57.4,
+   "motion": 0.92,
+   "vs_empty": 45.13,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-1766166406-a.jpg"
+  }
+ },
+ "1835441855": {
+  "key": "1835441855",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1835441855",
+  "kind": "scene",
+  "title": "Hollow Knight",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1835441855/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 16.4,
+   "motion": 0.93,
+   "vs_empty": 38.18,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-1835441855-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 16.3,
+   "motion": 0.83,
+   "vs_empty": 38.31,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/ww-1835441855-a.jpg"
+  }
+ },
+ "1922177752": {
+  "key": "1922177752",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1922177752",
+  "kind": "scene",
+  "title": "Firewatch (clock, snow,)",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1922177752/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 55.0,
+   "motion": 0.11,
+   "vs_empty": 41.86,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-1922177752-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 55.1,
+   "motion": 0.12,
+   "vs_empty": 41.86,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-1922177752-a.jpg"
+  }
+ },
+ "1937925563": {
+  "key": "1937925563",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1937925563",
+  "kind": "scene",
+  "title": "Tropical Paradise 4K [Customizable Colors & Audio Visualizer] - Vaporwave & Neon",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1937925563/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 69.7,
+   "motion": 4.73,
+   "vs_empty": 54.68,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1937925563-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 71.6,
+   "motion": 6.33,
+   "vs_empty": 57.28,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-1937925563-a.jpg"
+  }
+ },
+ "1962375063": {
+  "key": "1962375063",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1962375063",
+  "kind": "scene",
+  "title": "Landscape",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1962375063/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 53.8,
+   "motion": 4.88,
+   "vs_empty": 54.8,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-1962375063-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 53.8,
+   "motion": 5.27,
+   "vs_empty": 55.22,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-1962375063-a.jpg"
+  }
+ },
+ "1962628637": {
+  "key": "1962628637",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1962628637",
+  "kind": "scene",
+  "title": "Naruto Konoha",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1962628637/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 55.7,
+   "motion": 3.13,
+   "vs_empty": 74.12,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-1962628637-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 55.3,
+   "motion": 7.55,
+   "vs_empty": 81.37,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-1962628637-a.jpg"
+  }
+ },
+ "1975950854": {
+  "key": "1975950854",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1975950854",
+  "kind": "scene",
+  "title": "Nature in a Lightbulb",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/1975950854/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 23.6,
+   "motion": 0.43,
+   "vs_empty": 47.13,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-1975950854-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 23.4,
+   "motion": 1.32,
+   "vs_empty": 46.99,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-1975950854-a.jpg"
+  }
+ },
+ "2012774374": {
+  "key": "2012774374",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2012774374",
+  "kind": "scene",
+  "title": "The Spring!",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2012774374/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 60.1,
+   "motion": 1.69,
+   "vs_empty": 45.33,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-2012774374-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 61.9,
+   "motion": 1.67,
+   "vs_empty": 45.4,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-2012774374-a.jpg"
+  }
+ },
+ "2017352317": {
+  "key": "2017352317",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2017352317",
+  "kind": "scene",
+  "title": "From the clouds",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2017352317/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 51.3,
+   "motion": 4.34,
+   "vs_empty": 136.69,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/lwe-2017352317-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 47.8,
+   "motion": 3.18,
+   "vs_empty": 127.98,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-2017352317-a.jpg"
+  }
+ },
+ "2073607599": {
+  "key": "2073607599",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2073607599",
+  "kind": "scene",
+  "title": "Lendscape",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2073607599/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 41.9,
+   "motion": 1.46,
+   "vs_empty": 45.69,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2073607599-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 41.9,
+   "motion": 1.52,
+   "vs_empty": 45.74,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-2073607599-a.jpg"
+  }
+ },
+ "2085800477": {
+  "key": "2085800477",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2085800477",
+  "kind": "scene",
+  "title": "Dragon Ball Franchise",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2085800477/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 72.0,
+   "motion": 25.68,
+   "vs_empty": 108.18,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-2085800477-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 72.6,
+   "motion": 26.98,
+   "vs_empty": 108.93,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-2085800477-a.jpg"
+  }
+ },
+ "2101160735": {
+  "key": "2101160735",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2101160735",
+  "kind": "scene",
+  "title": "Tori (鳥居) @ 4K",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2101160735/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 32.2,
+   "motion": 8.33,
+   "vs_empty": 29.95,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2101160735-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 24.0,
+   "motion": 5.15,
+   "vs_empty": 20.57,
+   "errors": [],
+   "secs": 11.2,
+   "shot": "shots/2026-10-24_1229/ww-2101160735-a.jpg"
+  }
+ },
+ "2111495079": {
+  "key": "2111495079",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2111495079",
+  "kind": "scene",
+  "title": "Forest [4k]",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2111495079/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 50.3,
+   "motion": 2.65,
+   "vs_empty": 32.69,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2111495079-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 57.6,
+   "motion": 2.27,
+   "vs_empty": 36.53,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-2111495079-a.jpg"
+  }
+ },
+ "2117666842": {
+  "key": "2117666842",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2117666842",
+  "kind": "scene",
+  "title": "Dragon Ball - Kame House",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2117666842/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 41.3,
+   "motion": 0.81,
+   "vs_empty": 103.28,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-2117666842-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 41.3,
+   "motion": 0.8,
+   "vs_empty": 103.28,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-2117666842-a.jpg"
+  }
+ },
+ "2130919433": {
+  "key": "2130919433",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2130919433",
+  "kind": "video",
+  "title": "Lone_Samurai_Sekiro",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2130919433/wallpaperwaifu.com-Lone-Samurai-Sekiro-Desktop.mp4",
+  "lwe": {
+   "verdict": "anima",
+   "std": 53.9,
+   "motion": 2.7,
+   "vs_empty": 63.94,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-2130919433-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 54.0,
+   "motion": 2.74,
+   "vs_empty": 63.42,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-2130919433-a.jpg"
+  }
+ },
+ "2134276902": {
+  "key": "2134276902",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2134276902",
+  "kind": "scene",
+  "title": "Destiny 2 Beyond Light",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2134276902/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 53.0,
+   "motion": 3.44,
+   "vs_empty": 57.59,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-2134276902-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 52.4,
+   "motion": 2.08,
+   "vs_empty": 57.2,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-2134276902-a.jpg"
+  }
+ },
+ "2147112208": {
+  "key": "2147112208",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2147112208",
+  "kind": "scene",
+  "title": "Cyberpunk Dragon",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2147112208/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 48.6,
+   "motion": 0.94,
+   "vs_empty": 49.9,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-2147112208-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 48.5,
+   "motion": 1.04,
+   "vs_empty": 49.94,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-2147112208-a.jpg"
+  }
+ },
+ "2178084983": {
+  "key": "2178084983",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2178084983",
+  "kind": "scene",
+  "title": "Edge of Oblivion.",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2178084983/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 34.2,
+   "motion": 5.85,
+   "vs_empty": 25.93,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2178084983-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 34.2,
+   "motion": 5.76,
+   "vs_empty": 25.81,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-2178084983-a.jpg"
+  }
+ },
+ "2190054449": {
+  "key": "2190054449",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2190054449",
+  "kind": "scene",
+  "title": "Mountain Sunset with Lake",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2190054449/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 34.8,
+   "motion": 0.64,
+   "vs_empty": 28.81,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-2190054449-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 34.8,
+   "motion": 0.62,
+   "vs_empty": 28.8,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-2190054449-a.jpg"
+  }
+ },
+ "2207463614": {
+  "key": "2207463614",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2207463614",
+  "kind": "scene",
+  "title": "Night Springs by Tanay in 4K",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2207463614/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 38.7,
+   "motion": 1.53,
+   "vs_empty": 30.15,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2207463614-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 39.3,
+   "motion": 1.79,
+   "vs_empty": 30.7,
+   "errors": [],
+   "secs": 11.3,
+   "shot": "shots/2026-10-24_1229/ww-2207463614-a.jpg"
+  }
+ },
+ "2288349344": {
+  "key": "2288349344",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2288349344",
+  "kind": "scene",
+  "title": "Lonely world",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2288349344/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 41.2,
+   "motion": 0.84,
+   "vs_empty": 43.8,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-2288349344-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 41.2,
+   "motion": 0.87,
+   "vs_empty": 43.82,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-2288349344-a.jpg"
+  }
+ },
+ "2290585492": {
+  "key": "2290585492",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2290585492",
+  "kind": "scene",
+  "title": "Winter tranquility",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2290585492/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 26.2,
+   "motion": 0.99,
+   "vs_empty": 44.81,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2290585492-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 28.5,
+   "motion": 1.19,
+   "vs_empty": 45.65,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-2290585492-a.jpg"
+  }
+ },
+ "2292665374": {
+  "key": "2292665374",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2292665374",
+  "kind": "scene",
+  "title": "Midnight Stars",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2292665374/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 26.8,
+   "motion": 0.31,
+   "vs_empty": 22.93,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2292665374-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 26.7,
+   "motion": 0.31,
+   "vs_empty": 22.94,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-2292665374-a.jpg"
+  }
+ },
+ "2401343936": {
+  "key": "2401343936",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2401343936",
+  "kind": "scene",
+  "title": "Pokemon Emerald",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2401343936/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 58.9,
+   "motion": 13.84,
+   "vs_empty": 82.06,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-2401343936-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 61.2,
+   "motion": 16.33,
+   "vs_empty": 84.13,
+   "errors": [],
+   "secs": 12.0,
+   "shot": "shots/2026-10-24_1229/ww-2401343936-a.jpg"
+  }
+ },
+ "2801953171": {
+  "key": "2801953171",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2801953171",
+  "kind": "scene",
+  "title": "Escape",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2801953171/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 29.7,
+   "motion": 0.3,
+   "vs_empty": 21.62,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-2801953171-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 33.6,
+   "motion": 0.47,
+   "vs_empty": 23.24,
+   "errors": [],
+   "secs": 11.4,
+   "shot": "shots/2026-10-24_1229/ww-2801953171-a.jpg"
+  }
+ },
+ "2951962261": {
+  "key": "2951962261",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2951962261",
+  "kind": "scene",
+  "title": "Hollow Knight by ITZAH",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/2951962261/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 27.0,
+   "motion": 0.4,
+   "vs_empty": 27.08,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-2951962261-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 27.1,
+   "motion": 0.72,
+   "vs_empty": 27.08,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/ww-2951962261-a.jpg"
+  }
+ },
+ "3300031038": {
+  "key": "3300031038",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3300031038",
+  "kind": "scene",
+  "title": "Minimalist Gengar 100+ Colour Palettes (Parallax) (Customisable) Color",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3300031038/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 39.8,
+   "motion": 2.65,
+   "vs_empty": 51.96,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-3300031038-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 65.2,
+   "motion": 10.2,
+   "vs_empty": 52.08,
+   "errors": [],
+   "secs": 11.4,
+   "shot": "shots/2026-10-24_1229/ww-3300031038-a.jpg"
+  }
+ },
+ "3325467188": {
+  "key": "3325467188",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3325467188",
+  "kind": "scene",
+  "title": "Hollow Knight",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3325467188/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 7.6,
+   "motion": 0.53,
+   "vs_empty": 37.84,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-3325467188-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 50.1,
+   "motion": 0.82,
+   "vs_empty": 39.83,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/ww-3325467188-a.jpg"
+  }
+ },
+ "3377104544": {
+  "key": "3377104544",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3377104544",
+  "kind": "scene",
+  "title": "Pokemon - Gengar Bathing [4K]",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3377104544/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 39.3,
+   "motion": 2.55,
+   "vs_empty": 127.52,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-3377104544-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 39.3,
+   "motion": 2.55,
+   "vs_empty": 127.38,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-3377104544-a.jpg"
+  }
+ },
+ "3419947305": {
+  "key": "3419947305",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3419947305",
+  "kind": "scene",
+  "title": "cloudy nature landscape near waterfall",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3419947305/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 44.3,
+   "motion": 3.1,
+   "vs_empty": 61.12,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-3419947305-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 45.0,
+   "motion": 3.27,
+   "vs_empty": 61.9,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-3419947305-a.jpg"
+  }
+ },
+ "3427546153": {
+  "key": "3427546153",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3427546153",
+  "kind": "video",
+  "title": "Cyberpunk 2077 Ambience Live Wallpaper",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3427546153/Cyberpunk 2077 Ambience Live Wallpaper.mp4",
+  "lwe": {
+   "verdict": "anima",
+   "std": 49.8,
+   "motion": 3.66,
+   "vs_empty": 29.49,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/lwe-3427546153-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 49.2,
+   "motion": 3.16,
+   "vs_empty": 28.77,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-3427546153-a.jpg"
+  }
+ },
+ "3433165867": {
+  "key": "3433165867",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3433165867",
+  "kind": "video",
+  "title": "Windmills by VISUALDON - 4k 60fps",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3433165867/windmills by VISUALDON.mp4",
+  "lwe": {
+   "verdict": "anima",
+   "std": 52.5,
+   "motion": 5.77,
+   "vs_empty": 51.54,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/lwe-3433165867-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 52.7,
+   "motion": 5.97,
+   "vs_empty": 51.5,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/ww-3433165867-a.jpg"
+  }
+ },
+ "3509243656": {
+  "key": "3509243656",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3509243656",
+  "kind": "scene",
+  "title": "三体实时演算 | Three-Body problem - SYKM",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3509243656/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-3509243656-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 6.5,
+   "motion": 0.17,
+   "vs_empty": 23.05,
+   "errors": [
+    "ERROR] script[100332f948fbe9db3e047ae99a567598a0e0f2ed] stack:",
+    "ERROR] script[100332f948fbe9db3e047ae99a567598a0e0f2ed] update threw: TypeError: cannot read property 'toFixed' of undefined",
+    "ERROR] script[3ec903192db2be817cf7f9197448b35aac6cf9a6] stack:",
+    "ERROR] script[3ec903192db2be817cf7f9197448b35aac6cf9a6] update threw: ReferenceError: createLayer asset is unavailable",
+    "ERROR] script[4fe3af0a7ce935bd1a9b565e669795c2555408ce] stack:",
+    "ERROR] script[4fe3af0a7ce935bd1a9b565e669795c2555408ce] update threw: TypeError: cannot read property 'toFixed' of undefined",
+    "ERROR] script[53ea6baf1815a0b7b43db7c1285bba8e56066e6e] stack:",
+    "ERROR] script[53ea6baf1815a0b7b43db7c1285bba8e56066e6e] update threw: TypeError: cannot read property 'toFixed' of undefined"
+   ],
+   "secs": 12.1,
+   "shot": "shots/2026-10-24_1229/ww-3509243656-a.jpg"
+  }
+ },
+ "3516106265": {
+  "key": "3516106265",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3516106265",
+  "kind": "scene",
+  "title": "Lost Cat. 8",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3516106265/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 39.7,
+   "motion": 3.18,
+   "vs_empty": 50.76,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-3516106265-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 38.7,
+   "motion": 2.04,
+   "vs_empty": 50.13,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-3516106265-a.jpg"
+  }
+ },
+ "3530181117": {
+  "key": "3530181117",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3530181117",
+  "kind": "scene",
+  "title": "（随时间变化）宝可梦  赤红 喷火龙 渡海到七岛-(Changes Over Time) Pokemon  RED And Charizardc Cross the sea t",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3530181117/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 65.3,
+   "motion": 21.42,
+   "vs_empty": 121.6,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/lwe-3530181117-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 61.2,
+   "motion": 45.68,
+   "vs_empty": 139.42,
+   "errors": [],
+   "secs": 11.4,
+   "shot": "shots/2026-10-24_1229/ww-3530181117-a.jpg"
+  }
+ },
+ "3551997868": {
+  "key": "3551997868",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3551997868",
+  "kind": "web",
+  "title": "Spectrum City Audio Visualizer",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3551997868/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 70.2,
+   "motion": 18.3,
+   "vs_empty": 56.51,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-3551997868-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima con errores",
+   "std": 82.0,
+   "motion": 6.55,
+   "vs_empty": 80.48,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-3551997868-a.jpg"
+  }
+ },
+ "3562113589": {
+  "key": "3562113589",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3562113589",
+  "kind": "scene",
+  "title": "Relaxing Sci-Fi LiminalSpace.",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3562113589/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 19.3,
+   "motion": 0.24,
+   "vs_empty": 16.54,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/lwe-3562113589-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 19.1,
+   "motion": 0.32,
+   "vs_empty": 16.35,
+   "errors": [],
+   "secs": 11.3,
+   "shot": "shots/2026-10-24_1229/ww-3562113589-a.jpg"
+  }
+ },
+ "3568316761": {
+  "key": "3568316761",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3568316761",
+  "kind": "scene",
+  "title": "Hollow Knight Silksong - Hornet on Flowers [4K]",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3568316761/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 49.6,
+   "motion": 2.84,
+   "vs_empty": 38.02,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-3568316761-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 50.0,
+   "motion": 2.98,
+   "vs_empty": 38.13,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-3568316761-a.jpg"
+  }
+ },
+ "3610369201": {
+  "key": "3610369201",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3610369201",
+  "kind": "video",
+  "title": "Hornet Taking a Break (Ambient Sounds)",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3610369201/Hornet Taking a Break (Ambient Sounds).mp4",
+  "lwe": {
+   "verdict": "anima",
+   "std": 40.5,
+   "motion": 1.84,
+   "vs_empty": 34.43,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-3610369201-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 40.6,
+   "motion": 1.97,
+   "vs_empty": 34.47,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-3610369201-a.jpg"
+  }
+ },
+ "3616389236": {
+  "key": "3616389236",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3616389236",
+  "kind": "scene",
+  "title": "Aesthetic Media Visualizer (Shortcut) | 𝙎𝙚𝙮𝙪𝙡.𝙎𝙖𝙡𝙩𝙯",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3616389236/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 75.6,
+   "motion": 7.33,
+   "vs_empty": 56.32,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-3616389236-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 62.3,
+   "motion": 4.96,
+   "vs_empty": 44.92,
+   "errors": [],
+   "secs": 11.2,
+   "shot": "shots/2026-10-24_1229/ww-3616389236-a.jpg"
+  }
+ },
+ "3684018768": {
+  "key": "3684018768",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3684018768",
+  "kind": "scene",
+  "title": "Before the Road",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3684018768/gifscene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 26.2,
+   "motion": 0.04,
+   "vs_empty": 20.48,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-3684018768-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 26.2,
+   "motion": 0.06,
+   "vs_empty": 20.49,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/ww-3684018768-a.jpg"
+  }
+ },
+ "3684196773": {
+  "key": "3684196773",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3684196773",
+  "kind": "scene",
+  "title": "Pixel Pokemon with Clock and Visualizer",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3684196773/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 59.2,
+   "motion": 2.27,
+   "vs_empty": 38.77,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/lwe-3684196773-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 36.2,
+   "motion": 10.06,
+   "vs_empty": 22.64,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-3684196773-a.jpg"
+  }
+ },
+ "3701356561": {
+  "key": "3701356561",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3701356561",
+  "kind": "scene",
+  "title": "Lost Valley | northway.",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3701356561/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 86.0,
+   "motion": 0.94,
+   "vs_empty": 135.72,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-3701356561-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 86.3,
+   "motion": 0.98,
+   "vs_empty": 135.98,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-3701356561-a.jpg"
+  }
+ },
+ "3701739398": {
+  "key": "3701739398",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3701739398",
+  "kind": "scene",
+  "title": "清新电车",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3701739398/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 56.5,
+   "motion": 1.41,
+   "vs_empty": 60.05,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-3701739398-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 56.5,
+   "motion": 1.42,
+   "vs_empty": 60.05,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-3701739398-a.jpg"
+  }
+ },
+ "3726523866": {
+  "key": "3726523866",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3726523866",
+  "kind": "scene",
+  "title": "Darth Vader | northway.",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3726523866/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 17.5,
+   "motion": 3.76,
+   "vs_empty": 26.99,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-3726523866-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 18.0,
+   "motion": 3.62,
+   "vs_empty": 26.89,
+   "errors": [],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-3726523866-a.jpg"
+  }
+ },
+ "3742442017": {
+  "key": "3742442017",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3742442017",
+  "kind": "scene",
+  "title": "Skyline Flow | Seyul",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3742442017/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 65.4,
+   "motion": 5.81,
+   "vs_empty": 106.68,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-3742442017-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 68.0,
+   "motion": 0.0,
+   "vs_empty": 100.64,
+   "errors": [
+    "ERROR: 10 compilation errors.  No code generated.",
+    "ERROR: 2 compilation errors.  No code generated.",
+    "ERROR: ww:500: ' temp float' : cannot construct with these arguments ",
+    "ERROR: ww:500: 'constructor' : can't convert ",
+    "ERROR: ww:500: 'declaration' : Expected ",
+    "ERROR: ww:500: 'expression' : Expected ",
+    "ERROR: ww:500: 'initializer' : Expected ",
+    "ERROR: ww:501: ' temp float' : cannot construct with these arguments "
+   ],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-3742442017-a.jpg"
+  }
+ },
+ "3744198512": {
+  "key": "3744198512",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3744198512",
+  "kind": "scene",
+  "title": "Polar Landscape | northway.",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3744198512/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 45.4,
+   "motion": 5.16,
+   "vs_empty": 37.53,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-3744198512-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 45.8,
+   "motion": 6.65,
+   "vs_empty": 38.69,
+   "errors": [],
+   "secs": 11.1,
+   "shot": "shots/2026-10-24_1229/ww-3744198512-a.jpg"
+  }
+ },
+ "3747222633": {
+  "key": "3747222633",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3747222633",
+  "kind": "web",
+  "title": "音域回响",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3747222633/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 26.3,
+   "motion": 9.24,
+   "vs_empty": 31.75,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-3747222633-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 2.6,
+   "motion": 1.44,
+   "vs_empty": 31.33,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-3747222633-a.jpg"
+  }
+ },
+ "3768505802": {
+  "key": "3768505802",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3768505802",
+  "kind": "scene",
+  "title": "Liquid Glass {Color Customizable}",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/3768505802/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 19.4,
+   "motion": 1.47,
+   "vs_empty": 84.29,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-3768505802-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 22.1,
+   "motion": 1.01,
+   "vs_empty": 79.2,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-3768505802-a.jpg"
+  }
+ },
+ "843532366": {
+  "key": "843532366",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/843532366",
+  "kind": "scene",
+  "title": "Aesthetic City",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/843532366/gifscene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 69.5,
+   "motion": 0.09,
+   "vs_empty": 88.33,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-843532366-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático",
+   "std": 69.5,
+   "motion": 0.06,
+   "vs_empty": 88.32,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/ww-843532366-a.jpg"
+  }
+ },
+ "861933876": {
+  "key": "861933876",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/861933876",
+  "kind": "web",
+  "title": "Rainbow Rings",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/861933876/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 16.9,
+   "motion": 7.22,
+   "vs_empty": 31.1,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-861933876-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima con errores",
+   "std": 8.5,
+   "motion": 0.62,
+   "vs_empty": 37.39,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-861933876-a.jpg"
+  }
+ },
+ "884307090": {
+  "key": "884307090",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/884307090",
+  "kind": "web",
+  "title": "Perfect Wallpaper-完美壁纸【落樱粒子+多风格动态音频响应+自定义+幻灯片+视频壁纸】-steam独此一家",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/884307090/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 34.5,
+   "motion": 4.9,
+   "vs_empty": 31.82,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-884307090-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima con errores",
+   "std": 36.3,
+   "motion": 6.12,
+   "vs_empty": 33.17,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 11.0,
+   "shot": "shots/2026-10-24_1229/ww-884307090-a.jpg"
+  }
+ },
+ "898191640": {
+  "key": "898191640",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/898191640",
+  "kind": "video",
+  "title": "Amv Naruto",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/898191640/Amv Naruto Shippuden Movie 9 _Menma Vs Naruto.mp4",
+  "lwe": {
+   "verdict": "nada",
+   "std": 0.2,
+   "motion": 0.03,
+   "vs_empty": 10.99,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-898191640-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 3.7,
+   "vs_empty": 10.0,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/ww-898191640-a.jpg"
+  }
+ },
+ "951549795": {
+  "key": "951549795",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/951549795",
+  "kind": "scene",
+  "title": "Shingeki no kyojin",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/951549795/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 83.2,
+   "motion": 0.65,
+   "vs_empty": 71.5,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/lwe-951549795-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 81.7,
+   "motion": 2.29,
+   "vs_empty": 70.97,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-951549795-a.jpg"
+  }
+ },
+ "955316590": {
+  "key": "955316590",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/955316590",
+  "kind": "scene",
+  "title": "Eren Jaeger Eyes - Shingeki No kyojin (Attack on Titan)",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/workshop/content/431960/955316590/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 65.2,
+   "motion": 1.56,
+   "vs_empty": 67.43,
+   "errors": [],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/lwe-955316590-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 68.0,
+   "motion": 2.75,
+   "vs_empty": 71.86,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-955316590-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal",
+  "kind": "scene",
+  "title": "Arsenal",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/arsenal/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-arsenal-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 67.7,
+   "motion": 0.0,
+   "vs_empty": 71.08,
+   "errors": [
+    "ERROR waywallen::api::websocket::wire: request 2 failed: renderer did not produce a frame: timed out after 15s waiting for renderer '2ba44d5a-524",
+    "ERROR] frame failed: graph execution error stage=1 pass=0 resource=9 cause=texture error kind=0 native=0: texture error kind=0 native=0",
+    "ERROR] frame resource: _rt_Reflection"
+   ],
+   "secs": 25.7,
+   "shot": "shots/2026-10-24_1229/ww-arsenal-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile",
+  "kind": "scene",
+  "title": "Audiophile",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/audiophile/audiophile.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-audiophile-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 25.0,
+   "errors": [
+    "ERROR] wallpaper layer 0 already belongs to scene node 1"
+   ],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/ww-audiophile-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/beach": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/beach",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/beach",
+  "kind": "scene",
+  "title": "Beach",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/beach/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 80.7,
+   "motion": 4.91,
+   "vs_empty": 103.95,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-beach-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 75.9,
+   "motion": 4.05,
+   "vs_empty": 98.17,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-beach-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection",
+  "kind": "web",
+  "title": "CORSAIR Collection",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_collection/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 39.4,
+   "motion": 1.87,
+   "vs_empty": 40.6,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-corsair_collection-a.jpg"
+  },
+  "ww": {
+   "verdict": "estático con errores",
+   "std": 37.4,
+   "motion": 0.0,
+   "vs_empty": 41.53,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-corsair_collection-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_o_tron": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_o_tron",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_o_tron",
+  "kind": "web",
+  "title": "Corsair-O-Tron",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/corsair_o_tron/index.html",
+  "lwe": {
+   "verdict": "anima con errores",
+   "std": 52.1,
+   "motion": 4.29,
+   "vs_empty": 187.51,
+   "errors": [
+    "ERROR:zygote_communication_linux.cc(296)] Failed to send GetTerminationStatus message to zygote"
+   ],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-corsair_o_tron-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima con errores",
+   "std": 53.9,
+   "motion": 1.01,
+   "vs_empty": 188.44,
+   "errors": [
+    "ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No existe el fichero o el directori",
+    "ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/Displ",
+    "ERROR:ui/ozone/platform/wayland/gpu/wayland_surface_factory.cc:249] '--ozone-platform=wayland' is not compatible with Vulkan. Consider switching "
+   ],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-corsair_o_tron-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space",
+  "kind": "scene",
+  "title": "Deep Space",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/deep_space/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 36.9,
+   "motion": 0.09,
+   "vs_empty": 36.83,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-deep_space-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 43.4,
+   "motion": 1.97,
+   "vs_empty": 47.92,
+   "errors": [],
+   "secs": 10.9,
+   "shot": "shots/2026-10-24_1229/ww-deep_space-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core",
+  "kind": "scene",
+  "title": "Demon Core",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/demon_core/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-demon_core-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 63.9,
+   "motion": 17.08,
+   "vs_empty": 123.71,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/ww-demon_core-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dino_run": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dino_run",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dino_run",
+  "kind": "scene",
+  "title": "Dino Run",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dino_run/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 56.6,
+   "motion": 7.64,
+   "vs_empty": 62.77,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-dino_run-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima con errores",
+   "std": 56.8,
+   "motion": 8.28,
+   "vs_empty": 62.86,
+   "errors": [
+    "ERROR] too small swapchain image size: 343x193"
+   ],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/ww-dino_run-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment",
+  "kind": "scene",
+  "title": "DNA Fragment",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/dna_fragment/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-dna_fragment-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 34.4,
+   "motion": 11.11,
+   "vs_empty": 25.01,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-dna_fragment-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/eagleflag": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/eagleflag",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/eagleflag",
+  "kind": "scene",
+  "title": "Eagle Flag",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/eagleflag/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 32.0,
+   "motion": 1.81,
+   "vs_empty": 31.29,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-eagleflag-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 34.5,
+   "motion": 3.38,
+   "vs_empty": 22.89,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-eagleflag-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar",
+  "kind": "scene",
+  "title": "Fantastic Car",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/fantasticcar/fantasticcar.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-fantasticcar-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 42.9,
+   "motion": 3.25,
+   "vs_empty": 79.94,
+   "errors": [],
+   "secs": 10.8,
+   "shot": "shots/2026-10-24_1229/ww-fantasticcar-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset",
+  "kind": "scene",
+  "title": "Neon Sunset",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/neon_sunset/scene.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-neon_sunset-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 42.1,
+   "motion": 16.02,
+   "vs_empty": 28.24,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/ww-neon_sunset-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_bedroom": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_bedroom",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_bedroom",
+  "kind": "scene",
+  "title": "Razer Bedroom",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_bedroom/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 23.6,
+   "motion": 0.45,
+   "vs_empty": 29.49,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-razer_bedroom-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 24.6,
+   "motion": 0.48,
+   "vs_empty": 29.68,
+   "errors": [],
+   "secs": 10.7,
+   "shot": "shots/2026-10-24_1229/ww-razer_bedroom-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_vortex": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_vortex",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_vortex",
+  "kind": "scene",
+  "title": "Razer Vortex",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/razer_vortex/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 18.7,
+   "motion": 2.02,
+   "vs_empty": 24.49,
+   "errors": [],
+   "secs": 10.5,
+   "shot": "shots/2026-10-24_1229/lwe-razer_vortex-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 18.8,
+   "motion": 2.0,
+   "vs_empty": 24.4,
+   "errors": [],
+   "secs": 11.2,
+   "shot": "shots/2026-10-24_1229/ww-razer_vortex-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro",
+  "kind": "scene",
+  "title": "Retro",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/retro/scene.json",
+  "lwe": {
+   "verdict": "estático",
+   "std": 31.2,
+   "motion": 0.22,
+   "vs_empty": 40.09,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-retro-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 27.7,
+   "motion": 0.76,
+   "vs_empty": 89.63,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/ww-retro-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod",
+  "kind": "scene",
+  "title": "Ricepod",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/ricepod/ricepod.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-ricepod-a.jpg"
+  },
+  "ww": {
+   "verdict": "anima",
+   "std": 40.2,
+   "motion": 1.02,
+   "vs_empty": 35.88,
+   "errors": [],
+   "secs": 10.6,
+   "shot": "shots/2026-10-24_1229/ww-ricepod-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles",
+  "kind": "scene",
+  "title": "Shimmering Particles",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/shimmering_particles/scene.json",
+  "lwe": {
+   "verdict": "anima",
+   "std": 91.7,
+   "motion": 41.2,
+   "vs_empty": 90.16,
+   "errors": [],
+   "secs": 10.3,
+   "shot": "shots/2026-10-24_1229/lwe-shimmering_particles-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 38.0,
+   "errors": [
+    "ERROR] load particleobj 'dust motes' material faild",
+    "ERROR] load particleobj 'small_motes_copy1' material faild",
+    "ERROR] required geometry shader source missing: /assets/shaders/particle.geom"
+   ],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/ww-shimmering_particles-a.jpg"
+  }
+ },
+ "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno": {
+  "key": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno",
+  "dir": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno",
+  "kind": "scene",
+  "title": "Techno",
+  "file": "/home/jucabego/.local/share/Steam/steamapps/common/wallpaper_engine/projects/defaultprojects/techno/techno.json",
+  "lwe": {
+   "verdict": "crash",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 0.0,
+   "errors": [],
+   "secs": 10.2,
+   "shot": "shots/2026-10-24_1229/lwe-techno-a.jpg"
+  },
+  "ww": {
+   "verdict": "nada",
+   "std": 0.0,
+   "motion": 0.0,
+   "vs_empty": 23.0,
+   "errors": [
+    "ERROR] wallpaper layer 0 already belongs to scene node 1"
+   ],
+   "secs": 10.4,
+   "shot": "shots/2026-10-24_1229/ww-techno-a.jpg"
+  }
+ }
+}

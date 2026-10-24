@@ -1,0 +1,14 @@
+[Unit]
+Description=waywallen daemon (motor principal de WE Wallpapers)
+After=graphical-session.target pipewire.service
+PartOf=graphical-session.target
+
+[Service]
+# Puerto fijo: WE Wallpapers lo controla por ahí (waywallen.py). Sin interfaz ni bandeja: la UI es WE Wallpapers.
+ExecStart=/usr/bin/flatpak run org.waywallen.waywallen --ws-port 47321 --no-ui --no-tray
+ExecStop=/usr/bin/flatpak kill org.waywallen.waywallen
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

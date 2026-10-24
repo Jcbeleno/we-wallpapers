@@ -21,6 +21,9 @@ local WORKSHOP_DIRS = {
 -- connector ("*" = todas) -> { id = "123", props = { key = value } }
 local assignments = {}
 local lastAssignments = {}
+-- Salidas donde dibuja waywallen (WE Wallpapers): el fondo de Noctalia, en la misma capa, lo taparía.
+-- Se guarda y se reaplica en cada update: soltar un video con el plugin de mpvpaper lo vuelve a activar.
+local hostHidden = {}
 -- salida física -> { id, startedAt, paused, shot, shotApplied, group, members, proc }
 -- Las salidas de un mismo proceso comparten `proc`.
 local running = {}
@@ -56,7 +59,8 @@ end
 
 local function persist()
   noctalia.mkdirAll(DATA_DIR)
-  local body = noctalia.json.encode({ assignments = assignments, lastAssignments = lastAssignments }, true)
+  local body = noctalia.json.encode({ assignments = assignments, lastAssignments = lastAssignments,
+                                      hostHidden = hostHidden }, true)
   if body then noctalia.writeFile(STATE_FILE, body) end
 end
 
@@ -67,6 +71,7 @@ local function load()
   if type(data) == "table" then
     assignments = data.assignments or {}
     lastAssignments = data.lastAssignments or {}
+    hostHidden = type(data.hostHidden) == "table" and data.hostHidden or {}
   end
 end
 
@@ -170,7 +175,7 @@ local function stopOutput(name, restoreHost, callback)
   running[name] = nil
   local cmd = "pkill -CONT -f -- " .. pkillPattern(name) .. " ; pkill -TERM -f -- " .. pkillPattern(name)
   noctalia.runAsync(cmd, function()
-    if restoreHost then noctalia.setWallpaperEnabled(name, true) end
+    if restoreHost and not hostHidden[name] then noctalia.setWallpaperEnabled(name, true) end
     if callback then callback(info) end
   end)
 end
@@ -340,6 +345,7 @@ end
 -- ── Callbacks del host ───────────────────────────────────────────────────────
 
 function update()
+  for name in pairs(hostHidden) do noctalia.setWallpaperEnabled(name, false) end
   if not available then return end
   tick += 1
   supervise()
@@ -392,7 +398,11 @@ function onIpc(event, payload)
     restartAll()
   elseif event == "host-hide" or event == "host-show" then
     -- Otro motor (waywallen) dibuja esa salida en la capa de fondo: el de Noctalia lo tapaba.
-    if payload and payload ~= "" then noctalia.setWallpaperEnabled(payload, event == "host-show") end
+    if payload and payload ~= "" then
+      hostHidden[payload] = event == "host-hide" or nil
+      persist()
+      noctalia.setWallpaperEnabled(payload, event == "host-show")
+    end
   elseif event == "pause" or event == "resume" then
     local sig = event == "pause" and "STOP" or "CONT"
     for name, info in pairs(running) do

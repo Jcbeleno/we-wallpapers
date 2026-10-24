@@ -4,7 +4,7 @@
 set -e
 cd "$(dirname "$0")"
 ROOT="$(cd ../.. && pwd)"
-python3 -m venv "$ROOT/.venv"
+python3 -m venv --system-site-packages "$ROOT/.venv"  # gi y Pillow vienen del sistema
 "$ROOT/.venv/bin/pip" -q install protobuf websockets
 mkdir -p wwpb
 protoc -I proto --python_out=wwpb proto/control.proto proto/filter.proto
