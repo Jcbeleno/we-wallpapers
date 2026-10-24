@@ -114,6 +114,15 @@ local function pkillPattern(name)
   return shellQuote("[l]inux-wallpaperengine .*--screen-root " .. escaped .. " ")
 end
 
+-- SIGTERM y, si a los 3 s sigue vivo, SIGKILL: un motor con un hilo atascado no termina con TERM y
+-- se quedaba dibujando y sonando junto al nuevo.
+local function killCommand(name)
+  local p = pkillPattern(name)
+  return "pkill -CONT -f -- " .. p .. " ; pkill -TERM -f -- " .. p
+    .. " ; for i in $(seq 30); do pgrep -f -- " .. p .. " >/dev/null || break; sleep 0.1; done"
+    .. " ; pkill -KILL -f -- " .. p .. " ; true"
+end
+
 local function propValue(v)
   if type(v) == "boolean" then return v and "1" or "0" end
   return tostring(v)
@@ -173,7 +182,7 @@ local function stopOutput(name, restoreHost, callback)
   generation[name] = (generation[name] or 0) + 1
   local info = running[name]
   running[name] = nil
-  local cmd = "pkill -CONT -f -- " .. pkillPattern(name) .. " ; pkill -TERM -f -- " .. pkillPattern(name)
+  local cmd = killCommand(name)
   noctalia.runAsync(cmd, function()
     if restoreHost and not hostHidden[name] then noctalia.setWallpaperEnabled(name, true) end
     if callback then callback(info) end
@@ -196,7 +205,7 @@ local function startGroup(names, a, key)
   for _, name in ipairs(names) do
     generation[name] = (generation[name] or 0) + 1
     running[name] = nil
-    table.insert(stopCmd, "pkill -CONT -f -- " .. pkillPattern(name) .. " ; pkill -TERM -f -- " .. pkillPattern(name))
+    table.insert(stopCmd, killCommand(name))
   end
   local expected = {}
   for _, name in ipairs(names) do expected[name] = generation[name] end
@@ -371,7 +380,7 @@ end
 
 function onExit(signal, reason)
   for name in pairs(running) do
-    noctalia.runAsync("pkill -CONT -f -- " .. pkillPattern(name) .. " ; pkill -TERM -f -- " .. pkillPattern(name))
+    noctalia.runAsync(killCommand(name))
     if reason == "disable" or reason == "uninstall" then noctalia.setWallpaperEnabled(name, true) end
   end
   running = {}
